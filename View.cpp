@@ -5,6 +5,7 @@
 #include "View.h"
 #include "Command.h"
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -45,6 +46,7 @@ void View::beginGameLoop() {
             //if(controller_->activePlayer() == Computer) {
             //}
 
+            input:
             cout << ">";
             cin >> command;
 
@@ -63,7 +65,7 @@ void View::beginGameLoop() {
 
                 case RAGEQUIT: {
                     controller_->rageQuit();
-                    break;
+                    goto input;
                 }
 
                 case DECK: {
