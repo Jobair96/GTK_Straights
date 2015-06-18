@@ -11,8 +11,8 @@ using namespace std;
 int main(int argc, const char * argv[]) {
     // This is the main code we need
     Model model;
-    Controller controller(model);
-    View(argc, argv, model, controller);
+    Controller controller(&model);
+    View view(argc, argv, &model, &controller);
 
     return 0;
 }

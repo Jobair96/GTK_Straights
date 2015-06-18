@@ -13,7 +13,6 @@
 class Player {
 
 public:
-    Player();
     Player(const Deck &, const int);
 
     int playerNumber() const;
@@ -22,7 +21,13 @@ public:
 
     void print() const;
 
+    bool checkCard(const Card) const;
+
     void updateLegalPlays(const TableCards &);
+
+    void setLegalPlay(const Card);
+
+    void removeCard(const Card);
 
 private:
     std::vector<Card> hand_;

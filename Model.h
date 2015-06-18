@@ -21,30 +21,31 @@ public:
     Deck deck() const;
     TableCards tableCards() const;
 
-    Player player_1();
-    Player player_2();
-    Player player_3();
-    Player player_4();
-
     void setPlayer(const std::string, const int);
     void shuffleDeck(const int);
     void setActivePlayer(const int);
 
     void updateAllLegalPlays();
 
-    Player getPlayerWithCard(const Card) const;
-    Player activePlayer() const;
+    void updateActivePlayer();
+
+    void addCardToTable(const Card);
+
+    Player* getPlayerWithCard(const Card) const;
+    Player* activePlayer() const;
+
+    void replaceCurrentHumanWithComputer();
 
 private:
     Deck deck_;
     TableCards tableCards_;
 
-    Player player_1_;
-    Player player_2_;
-    Player player_3_;
-    Player player_4_;
+    Player *player_1_;
+    Player *player_2_;
+    Player *player_3_;
+    Player *player_4_;
 
-    Player activePlayer_;
+    Player *activePlayer_;
 
 };
 

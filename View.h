@@ -10,7 +10,7 @@
 class View {
 
 public:
-    View(int, const char **, Model &, Controller &);
+    View(int, const char **, Model *, Controller *);
     ~View();
 
     void invitePlayers();
@@ -23,8 +23,8 @@ public:
 
 
 private:
-    Model model_;
-    Controller controller_;
+    Model *model_;
+    Controller *controller_;
 };
 
 #endif //VIEW_H

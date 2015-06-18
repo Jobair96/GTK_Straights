@@ -15,6 +15,8 @@ public:
 
     std::vector<Card> tableCards() const;
 
+    void addCard(const Card);
+
     void print();
 
 private:

@@ -95,3 +95,7 @@ void TableCards::print() {
 
     cout << endl;
 }
+
+void TableCards::addCard(const Card card) {
+    tableCards_.push_back(card);
+}

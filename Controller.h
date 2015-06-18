@@ -10,7 +10,7 @@
 class Controller {
 
 public:
-    Controller(Model &);
+    Controller(Model *);
     ~Controller();
 
     void initializePlayer(const std::string, const int);
@@ -19,12 +19,20 @@ public:
     void updateLegalPlays();
 
     void setActivePlayer(const int);
-    Player activePlayer() const;
+    void setFirstPlayer(const int);
+
+    Player* activePlayer() const;
+
+    bool isLegalPlay(const Card) const;
+
+    void playCard(const Card);
 
     int getPlayerWithSevenSpade(const Card) const;
 
+    void rageQuit();
+
 private:
-    Model model_;
+    Model *model_;
 
 };
 
