@@ -3,6 +3,7 @@
 //
 
 #include "Controller.h"
+#include <iostream>
 
 using namespace std;
 
@@ -47,7 +48,7 @@ bool Controller::isLegalPlay(const Card card) const {
 }
 
 void Controller::playCard(Card card) {
-    model_->activePlayer()->removeCard(card);
+    model_->activePlayer()->removeCardFromHand(card);
     model_->addCardToTable(card);
     model_->updateAllLegalPlays();
     model_->updateActivePlayer();
@@ -55,4 +56,17 @@ void Controller::playCard(Card card) {
 
 void Controller::rageQuit() {
     model_->replaceCurrentHumanWithComputer();
+}
+
+void Controller::completeComputerTurn() {
+}
+
+void Controller::discard(const Card card) {
+    if(model_->activePlayer()->legalPlays().size() != 0) {
+        model_->activePlayer()->removeCardFromHand(card);
+        model_->activePlayer()->discard(card);
+    } else {
+        cout << "You have a legal play. You may not discard" << endl;
+    }
+
 }

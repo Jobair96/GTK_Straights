@@ -14,7 +14,7 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
     int seed = 0;
 
     if(argc >= 2) {
-        int seed = atoi(argv[1]);
+        seed = atoi(argv[1]);
     }
 
     controller_->initializeDeck(seed);
@@ -37,57 +37,54 @@ void View::beginGameLoop() {
 
     while(!cin.eof()) {
 
-        Human *human = static_cast<Human *> (controller_->activePlayer());
+        printPlayer(*(controller_->activePlayer()));
 
-        if(nullptr != human) {
+        input:
 
-            printPlayer(*(controller_->activePlayer()));
+        cout << ">";
+        cin >> command;
 
-            //if(controller_->activePlayer() == Computer) {
-            //}
+        //controller_->completeComputerTurn()
 
-            input:
-            cout << ">";
-            cin >> command;
-
-            switch (command.type) {
-                case PLAY: {
-                    bool result = false;
-                    if (controller_->isLegalPlay(command.card)) {
-                        controller_->playCard(command.card);
-                    } else {
-                        cout << "This is not a legal play." << endl;
-                        cout << ">";
-                    }
-
-                    break;
+        switch (command.type) {
+            case PLAY: {
+                bool result = false;
+                if (controller_->isLegalPlay(command.card)) {
+                    controller_->playCard(command.card);
+                } else {
+                    cout << "This is not a legal play." << endl;
+                    cout << ">";
                 }
 
-                case RAGEQUIT: {
-                    controller_->rageQuit();
-                    goto input;
-                }
-
-                case DECK: {
-                    model_->deck().print();
-                    break;
-                }
-
-                case QUIT: {
-                    return;
-                }
-
-                default: {
-                    cerr << "Invalid Command" << endl;
-                }
+                break;
             }
 
-            controller_->updateLegalPlays();
-        } else {
-            cout << "This is a computer" << endl;
-        }
-    }
+            case RAGEQUIT: {
+                controller_->rageQuit();
+                goto input;
+            }
 
+            case DECK: {
+                model_->deck().print();
+                break;
+            }
+
+            case DISCARD: {
+                controller_->discard(command.card);
+                break;
+            }
+
+            case QUIT: {
+                return;
+            }
+
+            default: {
+                cerr << "Invalid Command" << endl;
+            }
+        }
+
+        controller_->updateLegalPlays();
+    }
 }
 
 View::~View() {
@@ -96,10 +93,11 @@ View::~View() {
 
 void View::invitePlayers() {
     for(int i = 1; i < 5; ++i) {
-        string message = ">Is player ";
+        string message = "Is player ";
         string message_2 = " a human(h) or a computer(c)?";
         string playerType;
         cout << message << i << message_2 << endl;
+        cout << ">";
         cin >> playerType;
         controller_->initializePlayer(playerType, i);
     }

@@ -27,6 +27,10 @@ public:
 
     void playCard(const Card);
 
+    void completeComputerTurn();
+
+    void discard(const Card);
+
     int getPlayerWithSevenSpade(const Card) const;
 
     void rageQuit();

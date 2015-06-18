@@ -27,11 +27,19 @@ public:
 
     void setLegalPlay(const Card);
 
-    void removeCard(const Card);
+    virtual Card removeCardFromHand(const Card);
+
+    virtual void discard(const Card);
+
+    std::vector<Card> legalPlays() const;
+
+protected:
+    std::vector<Card> discards_;
+    std::vector<Card> hand_;
 
 private:
-    std::vector<Card> hand_;
     std::vector<Card> legalPlays_;
+
     int playerNumber_;
 
 };

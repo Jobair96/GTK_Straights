@@ -1361,7 +1361,7 @@ void Player::updateLegalPlays(const TableCards &tableCards) {
 }
 
 void Player::print() const {
-    cout << "Your hands: ";
+    cout << "Your hand: ";
 
     for(int i = 0; i < hand_.size(); ++i) {
         cout << hand_.at(i);
@@ -1372,15 +1372,13 @@ void Player::print() const {
 
     cout << endl;
 
-    cout << "Legal plays:";
+    cout << "Legal plays: ";
     for(int i = 0; i < legalPlays_.size(); ++i) {
         cout << legalPlays_.at(i) << endl;
         if(i != legalPlays_.size() - 1) {
             cout << " ";
         }
     }
-
-    cout << endl;
 }
 
 void Player::setLegalPlay(const Card card) {
@@ -1391,12 +1389,19 @@ bool Player::checkCard(const Card card) const {
     return find(legalPlays_.begin(), legalPlays_.end(), card) != legalPlays_.end();
 }
 
-void Player::removeCard(const Card card) {
+Card Player::removeCardFromHand(const Card card) {
     for( vector<Card>::iterator iter = hand_.begin(); iter != hand_.end(); ++iter ) {
-        if( *iter == card )
-        {
+        if( *iter == card ) {
             hand_.erase( iter );
             break;
         }
     }
+}
+
+void Player::discard(const Card card) {
+    discards_.push_back(card);
+}
+
+std::vector<Card> Player::legalPlays() const {
+    return legalPlays_;
 }

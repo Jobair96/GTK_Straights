@@ -12,5 +12,8 @@ class Computer : public Player {
 public:
     Computer(const Deck &, const int);
 
+    Card removeCardFromHand(const Card);
+    void discard(const Card);
+
 };
 #endif //COMPUTER_H

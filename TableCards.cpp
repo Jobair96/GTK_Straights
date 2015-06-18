@@ -22,7 +22,7 @@ vector<Card> TableCards::tableCards() const {
 void TableCards::print() {
     cout << "Cards on the table:" << endl;
 
-    cout << "Clubs: ";
+    cout << "Clubs:";
 
     vector<Card> temp;
 
@@ -42,7 +42,7 @@ void TableCards::print() {
 
     cout << endl;
 
-    cout << "Diamonds: ";
+    cout << "Diamonds:";
 
     // Diamonds
     for(int i = 0; i < tableCards_.size(); ++i) {
@@ -60,7 +60,7 @@ void TableCards::print() {
 
     cout << endl;
 
-    cout << "Hearts: ";
+    cout << "Hearts:";
 
     // Hearts
     for(int i = 0; i < tableCards_.size(); ++i) {
@@ -77,7 +77,7 @@ void TableCards::print() {
     }
 
     cout << endl;
-    cout << "Spades: ";
+    cout << "Spades:";
 
     // Spades
     for(int i = 0; i < tableCards_.size(); ++i) {
