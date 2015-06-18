@@ -37,14 +37,9 @@ void View::beginGameLoop() {
 
     while(!cin.eof()) {
 
-        Human *human = static_cast<Human *> (controller_->activePlayer());
-
-        if(nullptr != human) {
+        if (controller_->isActiveHumanPlayer()) {
 
             printPlayer(*(controller_->activePlayer()));
-
-            //if(controller_->activePlayer() == Computer) {
-            //}
 
             input:
             cout << ">";
@@ -81,11 +76,11 @@ void View::beginGameLoop() {
                     cerr << "Invalid Command" << endl;
                 }
             }
-
-            controller_->updateLegalPlays();
-        } else {
+        }  else {
             cout << "This is a computer" << endl;
+            controller_->playComputerTurn();
         }
+        controller_->updateLegalPlays();
     }
 
 }

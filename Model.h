@@ -32,7 +32,10 @@ public:
     void addCardToTable(const Card);
 
     Player* getPlayerWithCard(const Card) const;
-    Player* activePlayer() const;
+    Player* getActivePlayer() const;
+    int getActivePlayerNumber() const;
+
+    bool isActiveHumanPlayer() const;
 
     void replaceCurrentHumanWithComputer();
 
@@ -47,6 +50,7 @@ private:
 
     Player *activePlayer_;
 
+    std::string playerTypes_[4];
 };
 
 

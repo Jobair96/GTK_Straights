@@ -23,9 +23,11 @@ public:
 
     Player* activePlayer() const;
 
+    bool isActiveHumanPlayer() const;
     bool isLegalPlay(const Card) const;
 
     void playCard(const Card);
+    void playComputerTurn();
 
     int getPlayerWithSevenSpade(const Card) const;
 

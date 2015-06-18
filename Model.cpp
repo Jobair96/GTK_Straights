@@ -34,28 +34,24 @@ Model::~Model() {
 }
 
 void Model::setPlayer(string playerType, int playerNumber) {
+    playerTypes_[playerNumber - 1] = playerType;
+
+    Player *player = NULL;
+
     if(playerType == "h") {
-        Human *human = new Human(deck_, playerNumber);
-        if(playerNumber == 1) {
-            player_1_ = human;
-        } else if(playerNumber == 2) {
-            player_2_ = human;
-        } else if(playerNumber == 3) {
-            player_3_ = human;
-        } else if(playerNumber == 4) {
-            player_4_ = human;
-        }
+        player = new Human(deck_, playerNumber);
     } else if(playerType == "c") {
-        Computer *computer = new Computer(deck_, playerNumber);
-        if(playerNumber == 1) {
-            player_1_ = computer;
-        } else if(playerNumber == 2) {
-            player_2_ = computer;
-        } else if(playerNumber == 3) {
-            player_3_ = computer;
-        } else if(playerNumber == 4) {
-            player_4_ = computer;
-        }
+        player = new Computer(deck_, playerNumber);
+    }
+
+    if(playerNumber == 1) {
+        player_1_ = player;
+    } else if(playerNumber == 2) {
+        player_2_ = player;
+    } else if(playerNumber == 3) {
+        player_3_ = player;
+    } else if(playerNumber == 4) {
+        player_4_ = player;
     }
 }
 
@@ -87,8 +83,24 @@ void Model::setActivePlayer(const int playerNumber) {
     }
 }
 
-Player* Model::activePlayer() const {
+Player* Model::getActivePlayer() const {
     return activePlayer_;
+}
+
+int Model::getActivePlayerNumber() const {
+    if (getActivePlayer() == player_1_) {
+        return 1;
+    } else if (getActivePlayer() == player_2_) {
+        return 2;
+    } else if (getActivePlayer() == player_3_) {
+        return 3;
+    } else if (getActivePlayer() == player_4_) {
+        return 4;
+    }
+}
+
+bool Model::isActiveHumanPlayer() const {
+    return "h" == playerTypes_[getActivePlayerNumber() - 1];
 }
 
 Deck Model::deck() const {
@@ -106,7 +118,7 @@ void Model::updateAllLegalPlays() {
     player_3_->updateLegalPlays(tableCards_);
     player_4_->updateLegalPlays(tableCards_);
 
-    activePlayer_ = activePlayer();
+    activePlayer_ = getActivePlayer();
 }
 
 void Model::addCardToTable(const Card card) {
@@ -114,7 +126,7 @@ void Model::addCardToTable(const Card card) {
 }
 
 void Model::updateActivePlayer() {
-    Player *currentActivePlayer = activePlayer();
+    Player *currentActivePlayer = getActivePlayer();
     if(currentActivePlayer == player_1_) {
         activePlayer_ = player_2_;
     } else if(currentActivePlayer == player_2_) {
@@ -127,7 +139,7 @@ void Model::updateActivePlayer() {
 }
 
 void Model::replaceCurrentHumanWithComputer() {
-    Player *currentPlayer = activePlayer();
+    Player *currentPlayer = getActivePlayer();
 
     Computer *computer = static_cast<Computer*>(currentPlayer);
 

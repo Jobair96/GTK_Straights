@@ -34,22 +34,30 @@ void Controller::updateLegalPlays() {
 }
 
 Player* Controller::activePlayer() const {
-    return model_->activePlayer();
+    return model_->getActivePlayer();
 }
 
 void Controller::setFirstPlayer(const int playerNumber) {
     setActivePlayer(playerNumber);
-    model_->activePlayer()->setLegalPlay(Card(SPADE, SEVEN));
+    model_->getActivePlayer()->setLegalPlay(Card(SPADE, SEVEN));
+}
+
+bool Controller::isActiveHumanPlayer() const {
+    return model_->isActiveHumanPlayer();
 }
 
 bool Controller::isLegalPlay(const Card card) const {
-    return model_->activePlayer()->checkCard(card);
+    return model_->getActivePlayer()->checkCard(card);
 }
 
 void Controller::playCard(Card card) {
-    model_->activePlayer()->removeCard(card);
+    model_->getActivePlayer()->removeCard(card);
     model_->addCardToTable(card);
     model_->updateAllLegalPlays();
+    model_->updateActivePlayer();
+}
+
+void Controller::playComputerTurn() {
     model_->updateActivePlayer();
 }
 
