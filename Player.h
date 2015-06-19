@@ -14,6 +14,7 @@ class Player {
 
 public:
     Player(const Deck &, const int);
+    virtual ~Player();
 
     int playerNumber() const;
 
@@ -31,10 +32,7 @@ public:
     virtual Card removeCardFromHand(const Card);
 
     std::vector<Card> hand() const;
-
-private:
     virtual void discard(const Card);
-
     std::vector<Card> legalPlays() const;
 
 protected:

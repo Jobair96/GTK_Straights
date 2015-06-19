@@ -14,6 +14,10 @@ Player::Player(const Deck &deck, const int playerNumber) : playerNumber_(playerN
     }
 }
 
+Player::~Player() {
+
+}
+
 int Player::playerNumber() const {
     return playerNumber_;
 }
@@ -48,4 +52,8 @@ std::vector<Card> Player::legalPlays() const {
 
 vector<Card> Player::hand() const {
     return hand_;
+}
+
+Card Player::removeCardFromHand(const Card card) {
+    return Card(SPADE, FOUR);
 }

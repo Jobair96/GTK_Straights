@@ -81,6 +81,11 @@ void View::beginGameLoop() {
                     break;
                 }
 
+                case DISCARD: {
+                    controller_->discard(command.card);
+                    break;
+                }
+
                 case RAGEQUIT: {
                     controller_->rageQuit();
                     goto input;
@@ -100,9 +105,9 @@ void View::beginGameLoop() {
                 }
             }
 
-            controller_->updateLegalPlays();
         } else {
             cout << "This is a computer" << endl;
+            controller_->completeComputerTurn();
         }
     }
 
