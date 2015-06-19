@@ -7,15 +7,19 @@
 
 #include "Deck.h"
 
+/* This represents the cards that have been played, i.e the ones face up on the table
+ * This is NOT the discard pile for each player
+ * */
+
 class TableCards {
 
 public:
-    TableCards();
-    ~TableCards();
+    TableCards(); // Constructor
+    ~TableCards(); // Destructor
 
-    std::vector<Card> tableCards() const;
+    std::vector<Card> tableCards() const; // returns tableCards_
 
-    void addCard(const Card);
+    void addCard(const Card); // Adds a card to the list of table cards i.e when a player a plays a card, it will be added.
 
 private:
     std::vector<Card> tableCards_;

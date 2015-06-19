@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 16/06/15.
-//
-
 #include "Player.h"
 
 using namespace std;
@@ -18,6 +14,10 @@ Player::~Player() {
 
 int Player::playerNumber() const {
     return playerNumber_;
+}
+
+vector<Card> Player::hand() const {
+    return hand_;
 }
 
 bool Player::findCard(const Card card) const {
@@ -44,6 +44,3 @@ void Player::discard(const Card card) {
     discards_.push_back(card);
 }
 
-vector<Card> Player::hand() const {
-    return hand_;
-}

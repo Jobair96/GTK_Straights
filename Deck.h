@@ -1,27 +1,26 @@
-//
-// Created by jobair_hassan on 15/06/15.
-//
-
 #ifndef DECK_H
 #define DECK_H
 
 #include "Card.h"
 #include <vector>
 
+/* This class represents the deck of cards for the game */
+
 class Deck {
 
 public:
-    Deck();
-    ~Deck();
+    Deck(); // Constructor
+    ~Deck(); // Destructor
 
-    void shuffle(const int);
-    void print() const;
+    void shuffle(const int); // Shuffles the deck using the seed parameter passed in
+    void print() const; // prints the contents of the deck
 
-    std::vector<Card> cards() const;
+    std::vector<Card> cards() const; // returns cards_
 
 private:
-    static const int CARD_COUNT = 52;
+    static const int CARD_COUNT = 52; // The number of cards in the deck
 
+    // The list of cards in the deck
     std::vector<Card> cards_ = {
         Card(CLUB, ACE),
         Card(CLUB, TWO),

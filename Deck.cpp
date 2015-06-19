@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 15/06/15.
-//
-
 #include "Deck.h"
 #include <random>
 #include <iostream>
@@ -9,6 +5,7 @@
 using namespace std;
 
 Deck::Deck() {
+
 }
 
 Deck::~Deck() {

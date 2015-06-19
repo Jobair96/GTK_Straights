@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 14/06/15.
-//
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -11,23 +7,23 @@
 class Player {
 
 public:
-    Player(const Deck &, const int);
-    virtual ~Player();
+    Player(const Deck &, const int); // Constructor
+    virtual ~Player(); // Destructor
 
-    int playerNumber() const;
+    int playerNumber() const; // Getter - returns playerNumber_
+    std::vector<Card> hand() const; // Getter - returns hand_
 
-    bool findCard(const Card card) const;
+    bool findCard(const Card) const; // Returns a boolean indicating if the card is in the player's hands
 
-    void removeCard(const Card);
+    void removeCard(const Card); // removes the specified card from the player's hand
 
-    std::vector<Card> hand() const;
-    virtual void discard(const Card);
+    virtual void discard(const Card); // discards the specified card from the hand
 
 protected:
-    std::vector<Card> discards_;
-    std::vector<Card> hand_;
+    std::vector<Card> discards_; // A list of all the player's discards
+    std::vector<Card> hand_; // A list of all the cards in a player's hand
 
-    int playerNumber_;
+    int playerNumber_; // The player number - can only be 1, 2, 3, 4
 
 };
 

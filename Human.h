@@ -10,7 +10,7 @@
 class Human : public Player {
 
 public:
-    Human(const Deck &, const int);
+    Human(const Deck &, const int); // Constructor - calls parent constructor
 
 };
 
