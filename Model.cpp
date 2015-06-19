@@ -177,7 +177,7 @@ void Model::updateActivePlayer() {
     } else if(currentActivePlayer == player_2_) {
         activePlayer_ = player_3_;
     } else if(currentActivePlayer == player_3_) {
-        activePlayer_ = player_3_;
+        activePlayer_ = player_4_;
     } else if(currentActivePlayer == player_4_) {
         activePlayer_ = player_1_;
     }

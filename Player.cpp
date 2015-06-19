@@ -3,8 +3,6 @@
 //
 
 #include "Player.h"
-#include <algorithm>
-#include <iostream>
 
 using namespace std;
 
@@ -46,14 +44,6 @@ void Player::discard(const Card card) {
     discards_.push_back(card);
 }
 
-std::vector<Card> Player::legalPlays() const {
-    return legalPlays_;
-}
-
 vector<Card> Player::hand() const {
     return hand_;
-}
-
-Card Player::removeCardFromHand(const Card card) {
-    return Card(SPADE, FOUR);
 }

@@ -17,8 +17,6 @@ public:
     void shuffle(const int);
     void print() const;
 
-    Card getCard(const Card) const;
-
     std::vector<Card> cards() const;
 
 private:

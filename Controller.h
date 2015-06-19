@@ -26,9 +26,9 @@ public:
     bool isLegalPlay(const Card) const;
 
     void playCard(const Card);
-    void playComputerTurn();
 
-    void completeComputerTurn();
+    void completeComputerPlayCard();
+    void completeComputerDiscard();
 
     void discard(const Card);
 

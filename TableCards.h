@@ -17,8 +17,6 @@ public:
 
     void addCard(const Card);
 
-    void print();
-
 private:
     std::vector<Card> tableCards_;
 };

@@ -1,13 +1,11 @@
 #include "Card.h"
-#include <string>
 #include <cassert>
 #include <iostream>
 
 using namespace std;
 
-string suits[SUIT_COUNT] = {"C", "D", "H", "S"};
-string ranks[RANK_COUNT] = {"A", "2", "3", "4", "5", "6",
-							"7", "8", "9", "10", "J", "Q", "K"};
+const std::string* Card::suits = suits_data;
+const std::string* Card::ranks = ranks_data;
 
 Card::Card(Suit s, Rank r){
 	suit_ = s;
@@ -27,7 +25,7 @@ bool operator==(const Card &a, const Card &b){
 }
 
 ostream &operator<<(ostream &out, const Card &c){
-	out << ranks[c.getRank()] << suits[c.getSuit()];
+	out << Card::ranks[c.getRank()] << Card::suits[c.getSuit()];
 
 	return out;
 }

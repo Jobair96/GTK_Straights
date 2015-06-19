@@ -24,12 +24,10 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
     beginGameLoop();
 }
 
-void View::printPlayer() {
-    model_->tableCards().print();
-
+void View::printPlayer() const {
     vector<Card> hand = controller_->getActiveHand();
 
-    cout << "Your hands: ";
+    cout << "Your hand: ";
 
     for(int i = 0; i < hand.size(); ++i) {
         cout << hand.at(i);
@@ -43,10 +41,65 @@ void View::printPlayer() {
     cout << "Legal plays:";
     for(int i = 0; i < hand.size(); ++i) {
         if (controller_->isLegalPlay(hand.at(i))) {
+            cout << " ";
             cout << hand.at(i);
-            if (i != hand.size() - 1) {
-                cout << " ";
-            }
+        }
+    }
+
+    cout << endl;
+}
+
+void View::printTableCards() const {
+
+    cout << "Cards on the table:" << endl;
+
+    cout << "Clubs:";
+
+    vector<Card> tableCards = model_->tableCards().tableCards();
+
+    vector<Card> temp;
+
+    // Clubs
+    for(int i = 0; i < tableCards.size(); ++i) {
+        if(tableCards[i].getSuit() == CLUB) {
+            cout << " ";
+            cout << Card::ranks[tableCards[i].getRank()];
+        }
+    }
+
+    cout << endl;
+
+    cout << "Diamonds:";
+
+    // Diamonds
+    for(int i = 0; i < tableCards.size(); ++i) {
+        if(tableCards[i].getSuit() == DIAMOND) {
+            cout << " ";
+            cout << Card::ranks[tableCards[i].getRank()];
+        }
+    }
+
+    cout << endl;
+
+    cout << "Hearts:";
+
+    // Hearts
+    for(int i = 0; i < tableCards.size(); ++i) {
+        if(tableCards[i].getSuit() == HEART) {
+            cout << " ";
+            cout << Card::ranks[tableCards[i].getRank()];
+        }
+    }
+
+    cout << endl;
+
+    cout << "Spades:";
+
+    // Spades
+    for(int i = 0; i < tableCards.size(); ++i) {
+        if(tableCards[i].getSuit() == SPADE) {
+            cout << " ";
+            cout << Card::ranks[tableCards[i].getRank()];
         }
     }
 
@@ -63,6 +116,7 @@ void View::beginGameLoop() {
 
         if (controller_->isActiveHumanPlayer()) {
 
+            printTableCards();
             printPlayer();
 
             input:
@@ -72,6 +126,7 @@ void View::beginGameLoop() {
             switch (command.type) {
                 case PLAY: {
                     if (controller_->isLegalPlay(command.card)) {
+                        cout << "Player " << controller_->activePlayer()->playerNumber() << " plays " << command.card << "." << endl;
                         controller_->playCard(command.card);
                     } else {
                         cout << "This is not a legal play." << endl;
@@ -82,18 +137,24 @@ void View::beginGameLoop() {
                 }
 
                 case DISCARD: {
-                    controller_->discard(command.card);
+                    if(!model_->hasLegalPlay()) {
+                        cout << "Player " << model_->activePlayer()->playerNumber() << " discards " << command.card << "." << endl;
+                        controller_->discard(command.card);
+                    } else {
+                        cout << "You have a legal play. You may not discard." << endl;
+                    }
                     break;
                 }
 
                 case RAGEQUIT: {
                     controller_->rageQuit();
-                    goto input;
+                    cout << "Player " << model_->activePlayer()->playerNumber() << " ragequits. A computer will now take over." << endl;
+                    goto label;
                 }
 
                 case DECK: {
                     model_->deck().print();
-                    break;
+                    goto input;
                 }
 
                 case QUIT: {
@@ -101,13 +162,20 @@ void View::beginGameLoop() {
                 }
 
                 default: {
-                    cerr << "Invalid Command" << endl;
+
                 }
             }
 
         } else {
-            cout << "This is a computer" << endl;
-            controller_->completeComputerTurn();
+            label:
+
+            if(model_->hasLegalPlay()) {
+                cout << "Player " << model_->activePlayer()->playerNumber() << " plays " << model_->getFirstLegalPlay() << "." << endl;
+                controller_->completeComputerPlayCard();
+            } else {
+                cout << "Player " << model_->activePlayer()->playerNumber() << " discards " << model_->activePlayer()->hand().at(0) << "." << endl;
+                controller_->completeComputerDiscard();
+            }
         }
     }
 

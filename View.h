@@ -16,7 +16,8 @@ public:
     void invitePlayers();
     void beginRound();
 
-    void printPlayer();
+    void printPlayer() const;
+    void printTableCards() const;
 
     void beginGameLoop();
 

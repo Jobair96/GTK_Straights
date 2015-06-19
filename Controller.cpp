@@ -26,6 +26,7 @@ void Controller::initializeDeck(const int seed) {
 void Controller::setActivePlayer(const int playerNumber) {
     model_->setActivePlayer(playerNumber);
 }
+
 int Controller::getPlayerWithSevenSpade(const Card card) const {
     return model_->getPlayerWithCard(card)->playerNumber();
 }
@@ -52,7 +53,7 @@ bool Controller::isLegalPlay(const Card card) const {
 }
 
 void Controller::playCard(Card card) {
-    model_->activePlayer()->removeCardFromHand(card);
+    model_->activePlayer()->removeCard(card);
     model_->addCardToTable(card);
     model_->updateLegalPlays(card);
     model_->updateActivePlayer();
@@ -62,27 +63,24 @@ void Controller::rageQuit() {
     model_->replaceCurrentHumanWithComputer();
 }
 
-void Controller::completeComputerTurn() {
-    if(model_->hasLegalPlay()) {
-        Card card = model_->getFirstLegalPlay();
-        model_->activePlayer()->removeCardFromHand(card);
-        model_->addCardToTable(card);
-        model_->updateLegalPlays(card);
-    } else {
-        Card card = model_->activePlayer()->hand().at(0);
-        model_->activePlayer()->discard(card);
-    }
+void Controller::completeComputerPlayCard() {
+    Card card = model_->getFirstLegalPlay();
+    model_->activePlayer()->removeCard(card);
+    model_->addCardToTable(card);
+    model_->updateLegalPlays(card);
+
+    model_->updateActivePlayer();
+}
+
+void Controller::completeComputerDiscard() {
+    Card card = model_->activePlayer()->hand().at(0);
+    model_->activePlayer()->discard(card);
 
     model_->updateActivePlayer();
 }
 
 void Controller::discard(const Card card) {
-    if(!model_->hasLegalPlay()) {
-        model_->activePlayer()->removeCardFromHand(card);
-        model_->activePlayer()->discard(card);
-        model_->updateActivePlayer();
-    } else {
-        cout << "You have a legal play. You may not discard" << endl;
-    }
-
+    model_->activePlayer()->removeCard(card);
+    model_->activePlayer()->discard(card);
+    model_->updateActivePlayer();
 }

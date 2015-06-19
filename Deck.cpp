@@ -57,14 +57,6 @@ void Deck::print() const {
     cout << cards_[51] << endl;
 }
 
-Card Deck::getCard(const Card card) const {
-    for(int i = 0; i < CARD_COUNT; ++i) {
-        if(cards_[i].getRank() == card.getRank() && cards_[i].getSuit() == card.getSuit()) {
-            return cards_[i];
-        }
-    }
-}
-
 vector<Card> Deck::cards() const {
     return cards_;
 }
