@@ -16,7 +16,7 @@ public:
     void invitePlayers();
     void beginRound();
 
-    void printPlayer(Player player);
+    void printPlayer();
 
     void beginGameLoop();
 

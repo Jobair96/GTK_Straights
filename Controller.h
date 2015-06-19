@@ -16,12 +16,11 @@ public:
     void initializePlayer(const std::string, const int);
     void initializeDeck(const int);
 
-    void updateLegalPlays();
-
     void setActivePlayer(const int);
     void setFirstPlayer(const int);
 
     Player* activePlayer() const;
+    std::vector<Card> getActiveHand() const;
 
     bool isActiveHumanPlayer() const;
     bool isLegalPlay(const Card) const;

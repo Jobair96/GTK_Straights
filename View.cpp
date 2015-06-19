@@ -14,7 +14,7 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
     int seed = 0;
 
     if(argc >= 2) {
-        int seed = atoi(argv[1]);
+        seed = atoi(argv[1]);
     }
 
     controller_->initializeDeck(seed);
@@ -24,9 +24,33 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
     beginGameLoop();
 }
 
-void View::printPlayer(Player player) {
+void View::printPlayer() {
     model_->tableCards().print();
-    player.print();
+
+    vector<Card> hand = controller_->getActiveHand();
+
+    cout << "Your hands: ";
+
+    for(int i = 0; i < hand.size(); ++i) {
+        cout << hand.at(i);
+        if(i != hand.size() - 1) {
+            cout << " ";
+        }
+    }
+
+    cout << endl;
+
+    cout << "Legal plays:";
+    for(int i = 0; i < hand.size(); ++i) {
+        if (controller_->isLegalPlay(hand.at(i))) {
+            cout << hand.at(i);
+            if (i != hand.size() - 1) {
+                cout << " ";
+            }
+        }
+    }
+
+    cout << endl;
 }
 
 void View::beginGameLoop() {
@@ -39,7 +63,7 @@ void View::beginGameLoop() {
 
         if (controller_->isActiveHumanPlayer()) {
 
-            printPlayer(*(controller_->activePlayer()));
+            printPlayer();
 
             input:
             cout << ">";
@@ -47,7 +71,6 @@ void View::beginGameLoop() {
 
             switch (command.type) {
                 case PLAY: {
-                    bool result = false;
                     if (controller_->isLegalPlay(command.card)) {
                         controller_->playCard(command.card);
                     } else {
@@ -80,7 +103,6 @@ void View::beginGameLoop() {
             cout << "This is a computer" << endl;
             controller_->playComputerTurn();
         }
-        controller_->updateLegalPlays();
     }
 
 }

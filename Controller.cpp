@@ -29,17 +29,17 @@ int Controller::getPlayerWithSevenSpade(const Card card) const {
     return model_->getPlayerWithCard(card)->playerNumber();
 }
 
-void Controller::updateLegalPlays() {
-    model_->updateAllLegalPlays();
+Player* Controller::activePlayer() const {
+    return model_->activePlayer();
 }
 
-Player* Controller::activePlayer() const {
-    return model_->getActivePlayer();
+vector<Card> Controller::getActiveHand() const {
+    return activePlayer()->hand();
 }
 
 void Controller::setFirstPlayer(const int playerNumber) {
     setActivePlayer(playerNumber);
-    model_->getActivePlayer()->setLegalPlay(Card(SPADE, SEVEN));
+    model_->setLegalPlay(Card(SPADE, SEVEN));
 }
 
 bool Controller::isActiveHumanPlayer() const {
@@ -47,13 +47,13 @@ bool Controller::isActiveHumanPlayer() const {
 }
 
 bool Controller::isLegalPlay(const Card card) const {
-    return model_->getActivePlayer()->checkCard(card);
+    return model_->isLegal(card);
 }
 
 void Controller::playCard(Card card) {
-    model_->getActivePlayer()->removeCard(card);
+    model_->activePlayer()->removeCard(card);
     model_->addCardToTable(card);
-    model_->updateAllLegalPlays();
+    model_->updateLegalPlays(card);
     model_->updateActivePlayer();
 }
 

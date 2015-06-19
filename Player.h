@@ -19,19 +19,12 @@ public:
 
     bool findCard(const Card card) const;
 
-    void print() const;
-
-    bool checkCard(const Card) const;
-
-    void updateLegalPlays(const TableCards &);
-
-    void setLegalPlay(const Card);
-
     void removeCard(const Card);
+
+    std::vector<Card> hand() const;
 
 private:
     std::vector<Card> hand_;
-    std::vector<Card> legalPlays_;
     int playerNumber_;
 
 };
