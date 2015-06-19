@@ -19,6 +19,13 @@ vector<Card> TableCards::tableCards() const {
 }
 
 void TableCards::addCard(const Card card) {
+    for (int i = 0; i < tableCards_.size(); ++i) {
+        if (tableCards_.at(i).getRank() > card.getRank()) {
+            tableCards_.insert(tableCards_.begin() + i, card);
+            return;
+        }
+    }
+
     tableCards_.push_back(card);
 }
 

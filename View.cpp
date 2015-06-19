@@ -144,7 +144,7 @@ void View::runGame(int seed) {
                         controller_->playCard(command.card);
                     } else {
                         cout << "This is not a legal play." << endl;
-                        cout << ">";
+                        goto input;
                     }
 
                     break;
@@ -156,6 +156,7 @@ void View::runGame(int seed) {
                         controller_->discard(command.card);
                     } else {
                         cout << "You have a legal play. You may not discard." << endl;
+                        goto input;
                     }
                     break;
                 }
@@ -163,7 +164,7 @@ void View::runGame(int seed) {
                 case RAGEQUIT: {
                     controller_->rageQuit();
                     cout << "Player " << model_->activePlayer()->playerNumber() << " ragequits. A computer will now take over." << endl;
-                    goto label;
+                    break;
                 }
 
                 case DECK: {
@@ -179,10 +180,9 @@ void View::runGame(int seed) {
 
                 }
             }
+        }
 
-        } else {
-            label:
-
+        if (!controller_->isActiveHumanPlayer()){
             if(model_->hasLegalPlay()) {
                 cout << "Player " << model_->activePlayer()->playerNumber() << " plays " << model_->getFirstLegalPlay() << "." << endl;
                 controller_->completeComputerPlayCard();
@@ -194,8 +194,9 @@ void View::runGame(int seed) {
     }
 
     for (int i = 1; i < 5; ++i) {
-        cout << "Player " << i << "'s discards: ";
+        cout << "Player " << i << "'s discards:";
         vector<Card> discards = controller_->getDiscards(i);
+        if (discards.size() > 0) cout << " ";
         for (int j = 0; j < discards.size(); ++j) {
             cout << discards.at(j);
 
@@ -204,7 +205,7 @@ void View::runGame(int seed) {
             }
         }
         cout << endl;
-        cout << "player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
+        cout << "Player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
         controller_->updateScore(i);
         cout << " = " << controller_->getScore(i) << endl;
     }
