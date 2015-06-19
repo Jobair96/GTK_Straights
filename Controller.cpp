@@ -1,9 +1,4 @@
-//
-// Created by jobair_hassan on 16/06/15.
-//
-
 #include "Controller.h"
-#include <iostream>
 
 using namespace std;
 
@@ -51,9 +46,13 @@ int Controller::getScoreGain(int playerNumber) const {
     return model_->getScoreGain(playerNumber);
 }
 
+vector<int> Controller::getWinners() const {
+    return model_->getWinners();
+}
+
 void Controller::setFirstPlayer(const int playerNumber) {
     setActivePlayer(playerNumber);
-    model_->setLegalPlay(Card(SPADE, SEVEN));
+    model_->resetLegalPlays();
 }
 
 bool Controller::isActiveHumanPlayer() const {
@@ -79,17 +78,22 @@ void Controller::playCard(Card card) {
     model_->updateActivePlayer();
 }
 
+void Controller::clearTable() {
+    model_->clearTable();
+}
+
+void Controller::resetPlay() {
+    model_->resetPlayers();
+    model_->resetLegalPlays();
+}
+
 void Controller::rageQuit() {
     model_->replaceCurrentHumanWithComputer();
 }
 
 void Controller::completeComputerPlayCard() {
     Card card = model_->getFirstLegalPlay();
-    model_->activePlayer()->removeCard(card);
-    model_->addCardToTable(card);
-    model_->updateLegalPlays(card);
-
-    model_->updateActivePlayer();
+    playCard(card);
 }
 
 void Controller::updateScore(int playerNumber) {
@@ -98,9 +102,7 @@ void Controller::updateScore(int playerNumber) {
 
 void Controller::completeComputerDiscard() {
     Card card = model_->activePlayer()->hand().at(0);
-    model_->activePlayer()->discard(card);
-
-    model_->updateActivePlayer();
+    discard(card);
 }
 
 void Controller::discard(const Card card) {

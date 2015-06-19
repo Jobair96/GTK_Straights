@@ -3,7 +3,6 @@
 //
 
 #include "TableCards.h"
-#include <iostream>
 
 using namespace std;
 
@@ -21,4 +20,9 @@ vector<Card> TableCards::tableCards() const {
 
 void TableCards::addCard(const Card card) {
     tableCards_.push_back(card);
+}
+
+void TableCards::clearTable() {
+    tableCards_.clear();
+    tableCards_ = vector<Card>();
 }

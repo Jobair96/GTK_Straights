@@ -18,10 +18,11 @@ public:
 
     void printPlayer() const;
     void printTableCards() const;
+    void printWinner() const;
 
-    void beginGameLoop();
+    void runGame(const int);
 
-    void refreshGame();
+    void refreshGame(int);
 
 private:
     Model *model_;

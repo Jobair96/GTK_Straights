@@ -123,12 +123,15 @@ bool Model::isLegal(const Card card) const {
 
 Card Model::getFirstLegalPlay() const {
     vector<Card> activeHand = activePlayer()->hand();
+    Card result = activeHand.at(0);
 
     for (int i = 0; i < activeHand.size(); ++i) {
         if (find(legalPlays_.begin(), legalPlays_.end(), activeHand.at(i)) != legalPlays_.end()) {
-            return activeHand.at(i);
+            result = activeHand.at(i);
+            break;
         }
     }
+    return result;
 }
 
 vector<Card> Model::getDiscards(int playerNumber) const {
@@ -153,6 +156,25 @@ Player *Model::getPlayer(int playerNumber) const {
     } else {
         return player_4_;
     }
+}
+
+vector<int> Model::getWinners() const {
+    vector<int> winners;
+    int lowestScore = getScore(1);
+
+    for (int i = 1; i < 5; ++i) {
+        if (getScore(i) <= lowestScore) {
+            lowestScore = getScore(i);
+        }
+    }
+
+    for (int i = 1; i < 5; ++i) {
+        if (getPlayer(i)->score() == lowestScore) {
+            winners.push_back(i);
+        }
+    }
+
+    return winners;
 }
 
 bool Model::allHandsEmpty() const {
@@ -190,8 +212,14 @@ void Model::updateLegalPlays(Card card) {
     }
 }
 
+void Model::resetLegalPlays() {
+    legalPlays_.clear();
+    legalPlays_ = vector<Card>();
+    setLegalPlay(Card(SPADE,SEVEN));
+}
+
 bool Model::isEndOfGame() const {
-    if (player_1_->score() > 80 || player_2_->score() > 80 || player_3_->score() > 80 || player_4_->score() > 80) {
+    if (player_1_->score() >= 80 || player_2_->score() >= 80 || player_3_->score() >= 80 || player_4_->score() >= 80) {
         return true;
     }
     return false;
@@ -218,7 +246,22 @@ void Model::updateScore(int playerNumber) {
     getPlayer(playerNumber)->updateScore();
 }
 
+void Model::clearTable() {
+    tableCards_.clearTable();
+}
+
+void Model::resetPlayers() {
+    for (int i = 1; i < 5; ++i) {
+        getPlayer(i)->reset();
+        getPlayer(i)->dealHand(deck_,i);
+    }
+}
+
 void Model::replaceCurrentHumanWithComputer() {
+    int playerNumber = getActivePlayerNumber();
+
+    playerTypes_[playerNumber - 1] = "c";
+
     Player *currentPlayer = activePlayer();
 
     Computer *computer = static_cast<Computer*>(currentPlayer);

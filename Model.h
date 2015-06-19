@@ -39,6 +39,7 @@ public:
     std::vector<Card> getDiscards(int) const;
     int getScore(int) const;
     int getScoreGain(int) const;
+    std::vector<int> getWinners() const;
 
     bool allHandsEmpty() const;
     bool hasLegalPlay() const;
@@ -48,6 +49,10 @@ public:
     bool isEndOfGame() const;
 
     void updateScore(int);
+
+    void clearTable();
+    void resetPlayers();
+    void resetLegalPlays();
 
     void replaceCurrentHumanWithComputer();
 

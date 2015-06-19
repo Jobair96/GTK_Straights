@@ -20,8 +20,6 @@ public:
 
     virtual void discard(const Card); // discards the specified card from the hand
 
-    virtual Card removeCardFromHand(const Card);
-
     void addToScore(const Card);
 
     std::vector<Card> discards() const;
@@ -29,6 +27,8 @@ public:
     int scoreGain() const;
 
     void updateScore();
+
+    void reset();
 
 protected:
     std::vector<Card> discards_; // A list of all the player's discards

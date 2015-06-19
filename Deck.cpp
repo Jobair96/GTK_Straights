@@ -13,7 +13,7 @@ Deck::~Deck() {
 }
 
 void Deck::shuffle(int seed) {
-    static mt19937 rng(seed);
+    static mt19937 rng((long)seed);
 
     int n = CARD_COUNT;
 

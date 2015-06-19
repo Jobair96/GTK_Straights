@@ -24,6 +24,7 @@ public:
     std::vector<Card> getDiscards(int) const;
     int getScore(int) const;
     int getScoreGain(int) const;
+    std::vector<int> getWinners() const;
 
     bool isActiveHumanPlayer() const;
     bool isLegalPlay(const Card) const;
@@ -31,7 +32,6 @@ public:
     bool isEndOfRound() const;
 
     void playCard(const Card);
-    void playComputerTurn();
 
     void updateScore(int);
 
@@ -41,6 +41,9 @@ public:
     void discard(const Card);
 
     int getPlayerWithSevenSpade(const Card) const;
+
+    void clearTable();
+    void resetPlay();
 
     void rageQuit();
 

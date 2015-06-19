@@ -17,17 +17,8 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
         seed = atoi(argv[1]);
     }
 
-    controller_->initializeDeck(seed);
+    runGame(seed);
 
-    invitePlayers();
-
-    roundStart:
-    beginGameLoop();
-
-    if (!controller_->isEndOfGame()) {
-        refreshGame();
-        goto roundStart;
-    }
 }
 
 View::~View() {
@@ -116,8 +107,21 @@ void View::printTableCards() const {
     cout << endl;
 }
 
-void View::beginGameLoop() {
+void View::printWinner() const {
+    vector<int> winners = controller_->getWinners();
 
+    for (int i = 0; i < winners.size(); ++i) {
+        cout << "Player " << winners.at(i) << " wins!" << endl;
+    }
+}
+
+void View::runGame(int seed) {
+
+    controller_->initializeDeck(seed);
+
+    invitePlayers();
+
+    roundStart:
     beginRound();
 
     Command command;
@@ -205,6 +209,12 @@ void View::beginGameLoop() {
         cout << " = " << controller_->getScore(i) << endl;
     }
 
+    if (!controller_->isEndOfGame()) {
+        refreshGame(seed);
+        goto roundStart;
+    }
+
+    printWinner();
 }
 
 void View::invitePlayers() {
@@ -226,6 +236,8 @@ void View::beginRound() {
     controller_->setFirstPlayer(playerNumber);
 }
 
-void View::refreshGame() {
-
+void View::refreshGame(int seed) {
+    controller_->clearTable();
+    controller_->initializeDeck(seed);
+    controller_->resetPlay();
 }

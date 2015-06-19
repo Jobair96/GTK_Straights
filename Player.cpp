@@ -59,10 +59,6 @@ void Player::discard(const Card card) {
     addToScore(card);
 }
 
-vector<Card> Player::hand() const {
-    return hand_;
-}
-
 int Player::score() const {
     return score_;
 }
@@ -71,11 +67,15 @@ int Player::scoreGain() const {
     return scoreGain_;
 }
 
-Card Player::removeCardFromHand(const Card card) {
-    return Card(SPADE, FOUR);
-}
-
 void Player::updateScore() {
     score_ += scoreGain_;
     scoreGain_ = 0;
+}
+
+void Player::reset() {
+    discards_.clear();
+    discards_ = vector<Card>();
+
+    hand_.clear();
+    hand_ = vector<Card>();
 }
