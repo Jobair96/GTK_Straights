@@ -38,6 +38,18 @@ vector<Card> Controller::getActiveHand() const {
     return activePlayer()->hand();
 }
 
+vector<Card> Controller::getDiscards(int playerNumber) const {
+    return model_->getDiscards(playerNumber);
+}
+
+int Controller::getScore(int playerNumber) const {
+    return model_->getScore(playerNumber);
+}
+
+int Controller::getScoreGain(int playerNumber) const {
+    return model_->getScoreGain(playerNumber);
+}
+
 void Controller::setFirstPlayer(const int playerNumber) {
     setActivePlayer(playerNumber);
     model_->setLegalPlay(Card(SPADE, SEVEN));
@@ -51,8 +63,16 @@ bool Controller::isLegalPlay(const Card card) const {
     return model_->isLegal(card);
 }
 
+bool Controller::isEndOfGame() const {
+    return model_->isEndOfGame();
+}
+
+bool Controller::isEndOfRound() const {
+    return model_->allHandsEmpty();
+}
+
 void Controller::playCard(Card card) {
-    model_->activePlayer()->removeCardFromHand(card);
+    model_->activePlayer()->removeCard(card);
     model_->addCardToTable(card);
     model_->updateLegalPlays(card);
     model_->updateActivePlayer();
@@ -62,23 +82,23 @@ void Controller::rageQuit() {
     model_->replaceCurrentHumanWithComputer();
 }
 
+void Controller::updateScore(int playerNumber) {
+    model_->updateScore(playerNumber);
+}
+
 void Controller::completeComputerTurn() {
     if(model_->hasLegalPlay()) {
         Card card = model_->getFirstLegalPlay();
-        model_->activePlayer()->removeCardFromHand(card);
-        model_->addCardToTable(card);
-        model_->updateLegalPlays(card);
+        playCard(card);
     } else {
         Card card = model_->activePlayer()->hand().at(0);
-        model_->activePlayer()->discard(card);
+        discard(card);
     }
-
-    model_->updateActivePlayer();
 }
 
 void Controller::discard(const Card card) {
     if(!model_->hasLegalPlay()) {
-        model_->activePlayer()->removeCardFromHand(card);
+        model_->activePlayer()->removeCard(card);
         model_->activePlayer()->discard(card);
         model_->updateActivePlayer();
     } else {

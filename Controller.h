@@ -21,12 +21,19 @@ public:
 
     Player* activePlayer() const;
     std::vector<Card> getActiveHand() const;
+    std::vector<Card> getDiscards(int) const;
+    int getScore(int) const;
+    int getScoreGain(int) const;
 
     bool isActiveHumanPlayer() const;
     bool isLegalPlay(const Card) const;
+    bool isEndOfGame() const;
+    bool isEndOfRound() const;
 
     void playCard(const Card);
     void playComputerTurn();
+
+    void updateScore(int);
 
     void completeComputerTurn();
 

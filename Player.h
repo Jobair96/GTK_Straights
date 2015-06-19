@@ -20,25 +20,27 @@ public:
 
     bool findCard(const Card card) const;
 
+    void dealHand(const Deck &, const int);
+
     void removeCard(const Card);
-    void print() const;
-
-    bool checkCard(const Card) const;
-
-    void updateLegalPlays(const TableCards &);
-
-    void setLegalPlay(const Card);
 
     virtual Card removeCardFromHand(const Card);
 
+    void addToScore(const Card);
+
     std::vector<Card> hand() const;
+    std::vector<Card> discards() const;
     virtual void discard(const Card);
-    std::vector<Card> legalPlays() const;
+    int score() const;
+    int scoreGain() const;
+
+    void updateScore();
 
 protected:
     std::vector<Card> discards_;
     std::vector<Card> hand_;
-    std::vector<Card> legalPlays_;
+    int score_;
+    int scoreGain_;
     int playerNumber_;
 
 };

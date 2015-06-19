@@ -131,6 +131,34 @@ Card Model::getFirstLegalPlay() const {
     }
 }
 
+vector<Card> Model::getDiscards(int playerNumber) const {
+    return getPlayer(playerNumber)->discards();
+}
+
+int Model::getScore(int playerNumber) const {
+    return getPlayer(playerNumber)->score();
+}
+
+int Model::getScoreGain(int playerNumber) const {
+    return getPlayer(playerNumber)->scoreGain();
+}
+
+Player *Model::getPlayer(int playerNumber) const {
+    if (playerNumber == 1) {
+        return player_1_;
+    } else if (playerNumber == 2) {
+        return player_2_;
+    } else if (playerNumber == 3) {
+        return player_3_;
+    } else {
+        return player_4_;
+    }
+}
+
+bool Model::allHandsEmpty() const {
+    return (player_1_->hand().size() + player_2_->hand().size() + player_3_->hand().size() + player_4_->hand().size()) == 0;
+}
+
 bool Model::hasLegalPlay() const {
     bool result = false;
 
@@ -147,23 +175,26 @@ bool Model::hasLegalPlay() const {
 }
 
 void Model::updateLegalPlays(Card card) {
-    std::vector<Card> legalPlays;
+    if (legalPlays_.size() == 1) {
+        setLegalPlay(Card(DIAMOND,SEVEN));
+        setLegalPlay(Card(HEART,SEVEN));
+        setLegalPlay(Card(CLUB,SEVEN));
+    }
 
     if (card.getRank() > 0) {
-        legalPlays.push_back(Card(card.getSuit(), (Rank)(card.getRank() - 1)));
+        legalPlays_.push_back(Card(card.getSuit(), (Rank) (card.getRank() - 1)));
     }
 
     if (card.getRank() < 12) {
-        legalPlays.push_back(Card(card.getSuit(), (Rank)(card.getRank() + 1)));
+        legalPlays_.push_back(Card(card.getSuit(), (Rank) (card.getRank() + 1)));
     }
+}
 
-    for (int i = 0; i < 4; ++i) {
-        if (i != card.getSuit()) {
-            legalPlays.push_back(Card((Suit)i, card.getRank()));
-        }
+bool Model::isEndOfGame() const {
+    if (player_1_->score() > 80 || player_2_->score() > 80 || player_3_->score() > 80 || player_4_->score() > 80) {
+        return true;
     }
-
-    legalPlays_ = legalPlays;
+    return false;
 }
 
 void Model::addCardToTable(const Card card) {
@@ -177,10 +208,14 @@ void Model::updateActivePlayer() {
     } else if(currentActivePlayer == player_2_) {
         activePlayer_ = player_3_;
     } else if(currentActivePlayer == player_3_) {
-        activePlayer_ = player_3_;
+        activePlayer_ = player_4_;
     } else if(currentActivePlayer == player_4_) {
         activePlayer_ = player_1_;
     }
+}
+
+void Model::updateScore(int playerNumber) {
+    getPlayer(playerNumber)->updateScore();
 }
 
 void Model::replaceCurrentHumanWithComputer() {

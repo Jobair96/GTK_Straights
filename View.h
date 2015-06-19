@@ -20,7 +20,7 @@ public:
 
     void beginGameLoop();
 
-
+    void refreshGame();
 
 private:
     Model *model_;

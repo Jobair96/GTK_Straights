@@ -15,8 +15,4 @@ Card Computer::removeCardFromHand(const Card card) {
     hand_.erase(iter);
 }
 
-void Computer::discard(const Card card) {
-    discards_.push_back(card);
-}
-
 

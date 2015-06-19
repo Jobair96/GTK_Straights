@@ -21,7 +21,17 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
 
     invitePlayers();
 
+    roundStart:
     beginGameLoop();
+
+    if (!controller_->isEndOfGame()) {
+        refreshGame();
+        goto roundStart;
+    }
+}
+
+View::~View() {
+
 }
 
 void View::printPlayer() {
@@ -59,7 +69,7 @@ void View::beginGameLoop() {
 
     Command command;
 
-    while(!cin.eof()) {
+    while(!controller_->isEndOfRound() && !cin.eof()) {
 
         if (controller_->isActiveHumanPlayer()) {
 
@@ -111,9 +121,21 @@ void View::beginGameLoop() {
         }
     }
 
-}
+    for (int i = 1; i < 5; ++i) {
+        cout << "Player " << i << "'s discards: ";
+        vector<Card> discards = controller_->getDiscards(i);
+        for (int j = 0; j < discards.size(); ++j) {
+            cout << discards.at(j);
 
-View::~View() {
+            if (j < discards.size() - 1) {
+                cout << " ";
+            }
+        }
+        cout << endl;
+        cout << "player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
+        controller_->updateScore(i);
+        cout << " = " << controller_->getScore(i) << endl;
+    }
 
 }
 
@@ -136,3 +158,6 @@ void View::beginRound() {
     controller_->setFirstPlayer(playerNumber);
 }
 
+void View::refreshGame() {
+
+}

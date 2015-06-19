@@ -36,11 +36,18 @@ public:
     Player* activePlayer() const;
     int getActivePlayerNumber() const;
     Card getFirstLegalPlay() const;
+    std::vector<Card> getDiscards(int) const;
+    int getScore(int) const;
+    int getScoreGain(int) const;
 
+    bool allHandsEmpty() const;
     bool hasLegalPlay() const;
 
     bool isLegal(const Card) const;
     bool isActiveHumanPlayer() const;
+    bool isEndOfGame() const;
+
+    void updateScore(int);
 
     void replaceCurrentHumanWithComputer();
 
@@ -57,6 +64,8 @@ private:
     Player *activePlayer_;
 
     std::string playerTypes_[4];
+
+    Player *getPlayer(int) const;
 };
 
 
