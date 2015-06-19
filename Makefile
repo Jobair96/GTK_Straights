@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++0x
+CXXFLAGS = -std=c++0x -g
 OBJECTS = main.o Card.o Command.o Computer.o Controller.o Deck.o Human.o Model.o Player.o TableCards.o View.o
 DEPENDS = ${OBJECTS:.o=.d}
 EXEC = straights

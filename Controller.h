@@ -35,7 +35,8 @@ public:
 
     void updateScore(int);
 
-    void completeComputerTurn();
+    void completeComputerPlayCard();
+    void completeComputerDiscard();
 
     void discard(const Card);
 

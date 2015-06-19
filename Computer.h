@@ -10,9 +10,7 @@
 class Computer : public Player {
 
 public:
-    Computer(const Deck &, const int);
-
-    Card removeCardFromHand(const Card);
-
+    Computer(const Deck &, const int); // Constructor - calls the parent constructor
 };
+
 #endif //COMPUTER_H

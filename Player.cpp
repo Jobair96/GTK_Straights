@@ -1,10 +1,4 @@
-//
-// Created by jobair_hassan on 16/06/15.
-//
-
 #include "Player.h"
-#include <algorithm>
-#include <iostream>
 
 using namespace std;
 
@@ -20,6 +14,10 @@ Player::~Player() {
 
 int Player::playerNumber() const {
     return playerNumber_;
+}
+
+vector<Card> Player::hand() const {
+    return hand_;
 }
 
 bool Player::findCard(const Card card) const {

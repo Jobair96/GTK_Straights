@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 15/06/15.
-//
-
 #include "Deck.h"
 #include <random>
 #include <iostream>
@@ -9,6 +5,7 @@
 using namespace std;
 
 Deck::Deck() {
+
 }
 
 Deck::~Deck() {
@@ -55,14 +52,6 @@ void Deck::print() const {
     }
 
     cout << cards_[51] << endl;
-}
-
-Card Deck::getCard(const Card card) const {
-    for(int i = 0; i < CARD_COUNT; ++i) {
-        if(cards_[i].getRank() == card.getRank() && cards_[i].getSuit() == card.getSuit()) {
-            return cards_[i];
-        }
-    }
 }
 
 vector<Card> Deck::cards() const {

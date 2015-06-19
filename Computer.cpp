@@ -10,9 +10,4 @@ Computer::Computer(const Deck &deck, const int playerNumber) : Player(deck, play
 
 }
 
-Card Computer::removeCardFromHand(const Card card) {
-    vector<Card>::iterator iter = hand_.begin();
-    hand_.erase(iter);
-}
-
 

@@ -1,47 +1,42 @@
-//
-// Created by jobair_hassan on 14/06/15.
-//
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <vector>
 #include "Deck.h"
 #include "TableCards.h"
-#include <string>
 
 class Player {
 
 public:
-    Player(const Deck &, const int);
-    virtual ~Player();
+    Player(const Deck &, const int); // Constructor
+    virtual ~Player(); // Destructor
 
-    int playerNumber() const;
+    int playerNumber() const; // Getter - returns playerNumber_
+    std::vector<Card> hand() const; // Getter - returns hand_
 
-    bool findCard(const Card card) const;
+    bool findCard(const Card) const; // Returns a boolean indicating if the card is in the player's hands
 
+    void removeCard(const Card); // removes the specified card from the player's hand
     void dealHand(const Deck &, const int);
 
-    void removeCard(const Card);
+    virtual void discard(const Card); // discards the specified card from the hand
 
     virtual Card removeCardFromHand(const Card);
 
     void addToScore(const Card);
 
-    std::vector<Card> hand() const;
     std::vector<Card> discards() const;
-    virtual void discard(const Card);
     int score() const;
     int scoreGain() const;
 
     void updateScore();
 
 protected:
-    std::vector<Card> discards_;
-    std::vector<Card> hand_;
+    std::vector<Card> discards_; // A list of all the player's discards
+    std::vector<Card> hand_; // A list of all the cards in a player's hand
+
+    int playerNumber_; // The player number - can only be 1, 2, 3, 4
     int score_;
     int scoreGain_;
-    int playerNumber_;
 
 };
 
