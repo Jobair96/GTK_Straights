@@ -24,8 +24,9 @@ public:
     void setPlayer(const std::string, const int);
     void shuffleDeck(const int);
     void setActivePlayer(const int);
+    void setLegalPlay(const Card);
 
-    void updateAllLegalPlays();
+    void updateLegalPlays(Card card);
 
     void updateActivePlayer();
 
@@ -33,12 +34,20 @@ public:
 
     Player* getPlayerWithCard(const Card) const;
     Player* activePlayer() const;
+    int getActivePlayerNumber() const;
+    Card getFirstLegalPlay() const;
+
+    bool hasLegalPlay() const;
+
+    bool isLegal(const Card) const;
+    bool isActiveHumanPlayer() const;
 
     void replaceCurrentHumanWithComputer();
 
 private:
     Deck deck_;
     TableCards tableCards_;
+    std::vector<Card> legalPlays_;
 
     Player *player_1_;
     Player *player_2_;
@@ -47,6 +56,7 @@ private:
 
     Player *activePlayer_;
 
+    std::string playerTypes_[4];
 };
 
 

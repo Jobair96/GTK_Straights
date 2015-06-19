@@ -24,9 +24,33 @@ View::View(int argc, const char** argv, Model *model, Controller *controller) : 
     beginGameLoop();
 }
 
-void View::printPlayer(Player player) {
+void View::printPlayer() {
     model_->tableCards().print();
-    player.print();
+
+    vector<Card> hand = controller_->getActiveHand();
+
+    cout << "Your hands: ";
+
+    for(int i = 0; i < hand.size(); ++i) {
+        cout << hand.at(i);
+        if(i != hand.size() - 1) {
+            cout << " ";
+        }
+    }
+
+    cout << endl;
+
+    cout << "Legal plays:";
+    for(int i = 0; i < hand.size(); ++i) {
+        if (controller_->isLegalPlay(hand.at(i))) {
+            cout << hand.at(i);
+            if (i != hand.size() - 1) {
+                cout << " ";
+            }
+        }
+    }
+
+    cout << endl;
 }
 
 void View::beginGameLoop() {
@@ -37,54 +61,51 @@ void View::beginGameLoop() {
 
     while(!cin.eof()) {
 
-        printPlayer(*(controller_->activePlayer()));
+        if (controller_->isActiveHumanPlayer()) {
 
-        input:
+            printPlayer();
 
-        cout << ">";
-        cin >> command;
+            input:
+            cout << ">";
+            cin >> command;
 
-        //controller_->completeComputerTurn()
+            switch (command.type) {
+                case PLAY: {
+                    if (controller_->isLegalPlay(command.card)) {
+                        controller_->playCard(command.card);
+                    } else {
+                        cout << "This is not a legal play." << endl;
+                        cout << ">";
+                    }
 
-        switch (command.type) {
-            case PLAY: {
-                bool result = false;
-                if (controller_->isLegalPlay(command.card)) {
-                    controller_->playCard(command.card);
-                } else {
-                    cout << "This is not a legal play." << endl;
-                    cout << ">";
+                    break;
                 }
 
-                break;
+                case RAGEQUIT: {
+                    controller_->rageQuit();
+                    goto input;
+                }
+
+                case DECK: {
+                    model_->deck().print();
+                    break;
+                }
+
+                case QUIT: {
+                    return;
+                }
+
+                default: {
+                    cerr << "Invalid Command" << endl;
+                }
             }
 
-            case RAGEQUIT: {
-                controller_->rageQuit();
-                goto input;
-            }
-
-            case DECK: {
-                model_->deck().print();
-                break;
-            }
-
-            case DISCARD: {
-                controller_->discard(command.card);
-                break;
-            }
-
-            case QUIT: {
-                return;
-            }
-
-            default: {
-                cerr << "Invalid Command" << endl;
-            }
+            controller_->updateLegalPlays();
+        } else {
+            cout << "This is a computer" << endl;
         }
-
-        controller_->updateLegalPlays();
     }
+
 }
 
 View::~View() {

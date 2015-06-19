@@ -19,6 +19,7 @@ public:
 
     bool findCard(const Card card) const;
 
+    void removeCard(const Card);
     void print() const;
 
     bool checkCard(const Card) const;
@@ -29,6 +30,9 @@ public:
 
     virtual Card removeCardFromHand(const Card);
 
+    std::vector<Card> hand() const;
+
+private:
     virtual void discard(const Card);
 
     std::vector<Card> legalPlays() const;
@@ -36,10 +40,7 @@ public:
 protected:
     std::vector<Card> discards_;
     std::vector<Card> hand_;
-
-private:
     std::vector<Card> legalPlays_;
-
     int playerNumber_;
 
 };
