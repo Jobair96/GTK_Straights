@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 16/06/15.
-//
-
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
@@ -10,45 +6,45 @@
 class Controller {
 
 public:
-    Controller(Model *);
-    ~Controller();
+    Controller(Model *); // constructor
+    ~Controller(); // destructor
 
-    void initializePlayer(const std::string, const int);
-    void initializeDeck(const int);
+    void initializePlayer(const std::string, const int); // creates a player using the incoming player type (c or h) and player number
+    void initializeDeck(const int); // helper method to call shuffle function
 
-    void setActivePlayer(const int);
-    void setFirstPlayer(const int);
+    void setActivePlayer(const int); // sets the active player based on player number, mainly used for assigning active player to the player with the spade
+    void setFirstPlayer(const int); // sets the first player as the player with the seven of spades
 
-    Player* activePlayer() const;
-    std::vector<Card> getActiveHand() const;
-    std::vector<Card> getDiscards(int) const;
-    int getScore(int) const;
-    int getScoreGain(int) const;
-    std::vector<int> getWinners() const;
+    Player* activePlayer() const; // returns the active player pointer
+    std::vector<Card> getActiveHand() const; // returns the hand of the active player
+    std::vector<Card> getDiscards(int) const; // gets a player's discards by player number
+    int getScore(int) const; // gets a player's score by player number
+    int getScoreGain(int) const; // gets a player's round score by player number
+    std::vector<int> getWinners() const; // gets the game winner
 
-    bool isActiveHumanPlayer() const;
-    bool isLegalPlay(const Card) const;
-    bool isEndOfGame() const;
-    bool isEndOfRound() const;
+    bool isActiveHumanPlayer() const; // checks if the active player is human
+    bool isLegalPlay(const Card) const; // checks if the card being played is legal
+    bool isEndOfGame() const; // checks if the game should be ended (score > 80)
+    bool isEndOfRound() const; // checks if the round should end (no player has cards)
 
-    void playCard(const Card);
+    void playCard(const Card); // puts the card into play on the table
 
-    void updateScore(int);
+    void updateScore(int); // updates the score of the specified player by number
 
-    void completeComputerPlayCard();
-    void completeComputerDiscard();
+    void completeComputerPlayCard(); // completes the computer turn if they play a card
+    void completeComputerDiscard(); // completes the computer turn if they discard a card
 
-    void discard(const Card);
+    void discard(const Card); // the active player discards the specified card
 
-    int getPlayerWithSevenSpade(const Card) const;
+    int getPlayerWithSevenSpade(const Card) const; // returns the player with seven of spades
 
-    void clearTable();
-    void resetPlay();
+    void clearTable(); // clears the table cards
+    void resetPlay(); // resets the players' hands and discards, as well as the legal plays
 
-    void rageQuit();
+    void rageQuit(); // changes human player to computer player and completes their turn
 
 private:
-    Model *model_;
+    Model *model_; // the collection of business and utility logic
 
 };
 

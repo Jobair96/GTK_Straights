@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 15/06/15.
-//
-
 #ifndef COMPUTER_H
 #define COMPUTER_H
 

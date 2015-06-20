@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 17/06/15.
-//
-
 #ifndef TABLECARDS_H
 #define TABLECARDS_H
 

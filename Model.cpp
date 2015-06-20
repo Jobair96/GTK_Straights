@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 16/06/15.
-//
-
 #include "Model.h"
 #include <algorithm>
 
@@ -118,7 +114,8 @@ void Model::setLegalPlay(const Card card) {
 }
 
 bool Model::isLegal(const Card card) const {
-    return find(legalPlays_.begin(), legalPlays_.end(), card) != legalPlays_.end();
+    return (find(legalPlays_.begin(), legalPlays_.end(), card) != legalPlays_.end())
+           && activePlayer()->findCard(card);
 }
 
 Card Model::getFirstLegalPlay() const {

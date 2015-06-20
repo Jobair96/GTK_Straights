@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 15/06/15.
-//
-
 #include "Computer.h"
 
 using namespace std;
