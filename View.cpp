@@ -6,6 +6,7 @@
 #include "Command.h"
 #include <iostream>
 #include <cstdlib>
+#include <assert.h>
 
 using namespace std;
 
@@ -226,7 +227,9 @@ void View::invitePlayers() {
         cout << message << i << message_2 << endl;
         cout << ">";
         cin >> playerType;
-        controller_->initializePlayer(playerType, i);
+        playerType = playerType.substr(0,1);
+        assert(playerType == "c" || playerType == "h");
+        controller_->initializePlayer(playerType.substr(0,1), i);
     }
 }
 
