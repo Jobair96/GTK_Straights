@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="11.3">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1150</x>
+      <y>390</y>
+      <w>210</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Card
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>470</x>
+      <y>650</y>
+      <w>210</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Controller
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1020</x>
+      <y>250</y>
+      <w>210</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>TableCards</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>110</x>
+      <y>820</y>
+      <w>210</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Model
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1160</x>
+      <y>750</y>
+      <w>210</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>main()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>1120</x>
+      <y>60</y>
+      <w>210</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>Deck</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>700</x>
+      <y>770</y>
+      <w>210</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>View
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>300</x>
+      <y>470</y>
+      <w>250</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Human
+--
+ + Human();</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>750</x>
+      <y>490</y>
+      <w>250</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>Computer
+--
++ Computer();</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>300</x>
+      <y>10</y>
+      <w>380</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>Player
+--
+- discards_ : vector&lt;Card&gt; {readOnly}
+- hand_ : vector&lt;Card&gt; {readOnly}
+- playerNumber_ : int {readOnly}
+- score_ : int = 0
+- scoreGain_ : int = 0
+--
++ Player(deck : Deck, playerNumber : int);
++ ~Player();
++ playerNumber() : int {query}
++ hand() : vector&lt;Card&gt; {query}
++ findCard(card : Card) : bool
++ removeCard(card : Card) : void
++ dealHand(deck : Deck, playerNumber : int) : void
++ discard(card : Card) : void
++ addToScore(card : Card) : void
++ discards() : vector&lt;Card&gt; {query} 
++ score() : int {query}
++ scoreGain() : int {query}
++ updateScore() : void
++ reset() : void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>380</x>
+      <y>340</y>
+      <w>100</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;130;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>430</x>
+      <y>340</y>
+      <w>450</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>430;150;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>120</x>
+      <y>50</y>
+      <w>1100</w>
+      <h>790</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;&gt;&gt;
+lt=&lt;-
+m1=card deck </panel_attributes>
+    <additional_attributes>1080;30;30;770</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>110</x>
+      <y>360</y>
+      <w>220</w>
+      <h>480</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1= 4
+game players
+</panel_attributes>
+    <additional_attributes>200;30;30;460</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>160</x>
+      <y>250</y>
+      <w>922</w>
+      <h>590</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=cards played
+lt=-&gt;&gt;&gt;</panel_attributes>
+    <additional_attributes>900;30;30;570</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>250</x>
+      <y>650</y>
+      <w>310</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+Talks to
+</panel_attributes>
+    <additional_attributes>290;30;30;170</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>560</x>
+      <y>650</y>
+      <w>190</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+Talks to
+</panel_attributes>
+    <additional_attributes>30;30;170;120</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>290</x>
+      <y>760</y>
+      <w>420</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;
+Observes</panel_attributes>
+    <additional_attributes>30;70;400;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>650</x>
+      <y>200</y>
+      <w>520</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+lt=-&gt;
+has a list of</panel_attributes>
+    <additional_attributes>30;30;500;200</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1210</x>
+      <y>50</y>
+      <w>138</w>
+      <h>350</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+lt=-&gt;
+has a list of</panel_attributes>
+    <additional_attributes>60;30;90;330</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1090</x>
+      <y>240</y>
+      <w>138</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+lt=-&gt;
+has a list of</panel_attributes>
+    <additional_attributes>40;30;100;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>650</x>
+      <y>630</y>
+      <w>530</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+m2= *
+
+</panel_attributes>
+    <additional_attributes>510;140;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>880</x>
+      <y>750</y>
+      <w>300</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+
+m2= *</panel_attributes>
+    <additional_attributes>280;30;30;40</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>290</x>
+      <y>750</y>
+      <w>1030</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;-
+
+m2= *</panel_attributes>
+    <additional_attributes>1010;30;30;70</additional_attributes>
+  </element>
+</diagram>

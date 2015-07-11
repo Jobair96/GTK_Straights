@@ -30,7 +30,7 @@ public:
 
     void reset(); // clear's players list of discards and hand
 
-protected:
+private:
     std::vector<Card> discards_; // A list of all the player's discards
     std::vector<Card> hand_; // A list of all the cards in a player's hand
 
