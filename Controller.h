@@ -9,6 +9,29 @@ public:
     Controller(Model *); // constructor
     ~Controller(); // destructor
 
+    void startNewGameButtonWithSeedButtonClicked(const int);
+    void endCurrentGameButtonClicked();
+    void playerTypeButtonClicked(const int);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   // Starting here is our old code
+
     void initializePlayer(const std::string, const int); // creates a player using the incoming player type (c or h) and player number
     void initializeDeck(const int); // helper method to call shuffle function
 
@@ -46,7 +69,7 @@ public:
 private:
     Model *model_; // the collection of business and utility logic
 
-};
+}; // Controller
 
 
 #endif //CONTROLLER_H

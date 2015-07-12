@@ -110,3 +110,7 @@ void Controller::discard(const Card card) {
     model_->activePlayer()->discard(card);
     model_->updateActivePlayer();
 }
+
+void Controller::startNewGameButtonWithSeedButtonClicked(const int i) {
+
+}

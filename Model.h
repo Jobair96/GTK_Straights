@@ -1,6 +1,8 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include "Subject.h"
+
 #include "Deck.h"
 #include "Player.h"
 #include "Human.h"
@@ -8,7 +10,8 @@
 #include "TableCards.h"
 
 
-class Model {
+
+class Model : public Subject {
 
 public:
     Model(); // constructor
