@@ -35,9 +35,9 @@ void Model::setPlayer(string playerType, int playerNumber) {
 
     Player *player = NULL;
 
-    if(playerType == "h") {
+    if(playerType == "Human") {
         player = new Human(deck_, playerNumber);
-    } else if(playerType == "c") {
+    } else if(playerType == "Computer") {
         player = new Computer(deck_, playerNumber);
     }
 
@@ -50,6 +50,7 @@ void Model::setPlayer(string playerType, int playerNumber) {
     } else if(playerNumber == 4) {
         player_4_ = player;
     }
+
 }
 
 void Model::shuffleDeck(int seed) {
@@ -79,6 +80,8 @@ void Model::setActivePlayer(const int playerNumber) {
     } else if(playerNumber == 4) {
         activePlayer_ = player_4_;
     }
+
+    notify();
 }
 
 Player* Model::activePlayer() const {

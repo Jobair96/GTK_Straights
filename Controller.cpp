@@ -10,13 +10,6 @@ Controller::~Controller() {
 
 }
 
-void Controller::initializePlayer(const string playerType, const int playerNumber) {
-    model_->setPlayer(playerType, playerNumber);
-}
-
-void Controller::initializeDeck(const int seed) {
-    model_->shuffleDeck(seed);
-}
 
 void Controller::setActivePlayer(const int playerNumber) {
     model_->setActivePlayer(playerNumber);
@@ -111,6 +104,24 @@ void Controller::discard(const Card card) {
     model_->updateActivePlayer();
 }
 
-void Controller::startNewGameButtonWithSeedButtonClicked(const int i) {
+void Controller::startNewGameButtonWithSeedButtonClicked(
+        const int seed,
+        string player_1_type,
+        string player_2_type,
+        string player_3_type,
+        string player_4_type)
+{
+    // shuffle deck
+    model_->shuffleDeck(seed);
+
+    // initialize players
+    model_->setPlayer(player_1_type, 1);
+    model_->setPlayer(player_2_type, 2);
+    model_->setPlayer(player_3_type, 3);
+    model_->setPlayer(player_4_type, 4);
+
+    // Initialize active player to player with seven of spades
+    model_->setActivePlayer(model_->getPlayerWithCard(Card(SPADE, SEVEN))->playerNumber());
 
 }
+

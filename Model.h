@@ -1,11 +1,17 @@
+/*
+ * Model class. It is responsible for keeping track of the players (their discards, their hands,
+ * their score) and the cards on the table. It also manages the deck of cards (shuffling). It has no
+ * knowledge about views or controllers.
+ */
+
 #ifndef MODEL_H
 #define MODEL_H
 
 #include "Subject.h"
 
 #include "Deck.h"
-#include "Player.h"
 #include "Human.h"
+#include "Player.h"
 #include "Computer.h"
 #include "TableCards.h"
 

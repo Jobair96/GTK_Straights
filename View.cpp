@@ -9,19 +9,25 @@ using namespace std;
 
 View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(true, 5), topPanel_(true, 5), playerPanel_(true, 5), endCurrentGameButton_("End current game"),
 tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
- player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(true, 20) {
+ player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(true, 5) {
 
     // Sets some properties of the window
     set_title("Straights UI");
     set_border_width(20);
 
+
     // Add the top panel widgets to topPanel_
     topPanel_.add(startNewGameButtonWithSeedButton_);
+
+    // set default value for seed
+    seedField_.set_text("0");
+
     topPanel_.add(seedField_);
     topPanel_.add(endCurrentGameButton_);
 
     // Used for initializtion of table and hand cards
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
+    const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
 
     // The following is all the code required to initialize the table cards
     for(int i = 0; i < 52; ++i) {
@@ -66,7 +72,7 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
 
     // Initialize the 13 null card buttons and place them in the box.
     for (int i = 0; i < 13; ++i) {
-        card_[i] = new Gtk::Image( nullCardPixbuf );
+        card_[i] = new Gtk::Image( nullCardPixbuf);
         button_[i].set_image( *card_[i]);
         cardBox_.add( button_[i] );
     } // for
@@ -76,7 +82,6 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
 
     // Add all the horizontal panels to the main vertical panel
     mainPanel_.add(topPanel_);
-    mainPanel_.add(tableCardsBox_);
     mainPanel_.add(playerPanel_);
     mainPanel_.add(cardFrame_);
 
@@ -90,11 +95,10 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
     // The final step is to display the buttons (they display themselves)
     show_all();
 
-    int seed = 0;
+    // Now we register view as observer of model
+    model_->subscribe(this);
 
     //runGame(seed);
-
-    // Register view as observer of model
 
 } // View::View
 
@@ -198,7 +202,76 @@ void View::printWinner() const {
     }
 }
 
-void View::runGame(int seed) {
+void View::update() {
+    // Things to update:
+    // 1) Active player - if player is human, then show hand and wait for input
+    //    otherwise, let model play computer's turn, then notify again
+    // 2) Table cards - get relevent table card data from model, and update
+    //    table cards on gui
+    // 3) Also Update every player's points
+    // 4) Also update every player's discard number
+
+
+    // 1) If player is human, then show hand, otherwise do nothing
+    if(!model_->isActiveHumanPlayer()) {
+        vector<Card> hand = model_->activePlayer()->hand();
+
+        for (int i = 0; i < hand.size(); ++i) {
+            const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
+
+            card_[i]->set(cardPixbuf);
+
+        }
+    }
+
+   /* // 2) Now get relevent table card data from model
+    vector<Card> tableCards = model_->tableCards().tableCards();
+
+    if(tableCards.size() != 0) {
+        for (int i = 0; i < tableCards.size(); ++i) {
+            Card card = Card(tableCards[i].getSuit(), tableCards[i].getRank());
+
+            const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(tableCards[i].getRank(),
+                                                                           tableCards[i].getSuit());
+
+            // Get index of this card
+            int index = card.getSuit() * 4 + card.getRank() * 4;
+
+            // delete previous card
+            if (nullptr != tableCards_[index]) {
+                delete tableCards_[index];
+                tableCards_[i] = nullptr;
+            }
+
+            tableCards_[i] = new Gtk::Image(cardPixbuf);
+
+            for (int i = 0; i < 13; ++i) {
+                tableClubCards_.add(*tableCards_[i]);
+            }
+
+            for (int i = 13; i < 26; ++i) {
+                tableDaimondCards_.add(*tableCards_[i]);
+            }
+
+            for (int i = 26; i < 39; ++i) {
+                tableHeartCards_.add(*tableCards_[i]);
+            }
+
+            for (int i = 39; i < 52; ++i) {
+                tableSpadeCards_.add(*tableCards_[i]);
+            }
+
+
+            tableCardsBox_.add(tableClubCards_);
+            tableCardsBox_.add(tableDaimondCards_);
+            tableCardsBox_.add(tableHeartCards_);
+            tableCardsBox_.add(tableSpadeCards_);
+        }
+    }*/
+
+}
+
+/* void View::runGame(int seed) {
 
     controller_->initializeDeck(seed);
 
@@ -299,21 +372,7 @@ void View::runGame(int seed) {
     }
 
     printWinner();
-}
-
-void View::invitePlayers() {
-    for(int i = 1; i < 5; ++i) {
-        string message = "Is player ";
-        string message_2 = " a human(h) or a computer(c)?";
-        string playerType;
-        cout << message << i << message_2 << endl;
-        cout << ">";
-        cin >> playerType;
-        playerType = playerType.substr(0,1);
-        assert(playerType == "c" || playerType == "h");
-        controller_->initializePlayer(playerType.substr(0,1), i);
-    }
-}
+}*/
 
 void View::beginRound() {
     string message = "A new round begins. It's player ";
@@ -324,16 +383,35 @@ void View::beginRound() {
 
 void View::refreshGame(int seed) {
     controller_->clearTable();
-    controller_->initializeDeck(seed);
+    //controller_->initializeDeck(seed);
     controller_->resetPlay();
 }
 
-void View::update() {
-
-}
-
+// When starting a new game, there are several things we must do.
+// Firstly, we gather the type of every player, then send that to the controller
+// to properly initialize each player. Afterwards,
 void View::startNewGameButtonWithSeedButtonClicked() {
-    cout << "start new game button was clicked!" << endl;
+
+    // When starting a new game, we check the type of players, then
+    // send that information to the controller to initialize all the
+    // new players.
+    string player_1_type = player_1_button_.get_label();
+    string player_2_type = player_2_button_.get_label();
+    string player_3_type = player_3_button_.get_label();
+    string player_4_type = player_4_button_.get_label();
+
+    // The following is to convert the seed value in the
+    // text field into an integer
+    Glib::ustring seedValueAsText = seedField_.get_text();
+    std::stringstream s;
+    int seed;
+
+    s << seedValueAsText.raw();
+    s >> seed;
+
+    controller_->startNewGameButtonWithSeedButtonClicked(seed, player_1_type, player_2_type, player_3_type, player_4_type);
+
+
 }
 
 void View::endCurrentGameButtonClicked() {

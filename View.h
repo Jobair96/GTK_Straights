@@ -23,7 +23,6 @@ public:
 
     /* Old code here */
 
-    void invitePlayers(); // function to add players to a game
     void beginRound(); // initializes a new round
 
     void printPlayer() const; // prints a player information

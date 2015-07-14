@@ -1,4 +1,4 @@
-#include <gtkmm.h>
+#include <gtkmm/main.h>
 #include "View.h"
 #include "Model.h"
 #include "Controller.h"
@@ -8,7 +8,6 @@ using namespace std;
 int main(int argc, char * argv[]) {
 
     Gtk::Main kit(argc, argv); // Initialize gtkmm with the command line arguments, as appropriate.
-    Gtk::Window window;
 
     Model model; // The model of the game
     Controller controller(&model); // The controller of the game

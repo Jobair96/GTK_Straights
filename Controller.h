@@ -9,7 +9,7 @@ public:
     Controller(Model *); // constructor
     ~Controller(); // destructor
 
-    void startNewGameButtonWithSeedButtonClicked(const int);
+    void startNewGameButtonWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string);
     void endCurrentGameButtonClicked();
     void playerTypeButtonClicked(const int);
 
@@ -32,8 +32,6 @@ public:
 
    // Starting here is our old code
 
-    void initializePlayer(const std::string, const int); // creates a player using the incoming player type (c or h) and player number
-    void initializeDeck(const int); // helper method to call shuffle function
 
     void setActivePlayer(const int); // sets the active player based on player number, mainly used for assigning active player to the player with the spade
     void setFirstPlayer(const int); // sets the first player as the player with the seven of spades
