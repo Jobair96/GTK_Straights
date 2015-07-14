@@ -7,19 +7,14 @@
 
 using namespace std;
 
-View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(true, 5), topPanel_(true, 5), playerPanel_(true, 5), endCurrentGameButton_("End current game"),
-tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
- player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(true, 5) {
+View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
+tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
+ player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(), player_1_score_("0 points") {
 
     // Sets some properties of the window
     set_title("Straights UI");
     set_border_width(20);
 
-    // Add the main vertical panel to the window
-    add(mainPanel_);
-
-    /////////////////////////////////////////// Top Panel /////////////////////////////////
-    mainPanel_.pack_start(topPanel_);
 
     // Add the top panel widgets to topPanel_
     topPanel_.add(startNewGameButtonWithSeedButton_);
@@ -30,33 +25,11 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
     topPanel_.add(seedField_);
     topPanel_.add(endCurrentGameButton_);
 
-    ///////////////////////////////////////// Player's Hand Panel //////////////////////////
-
-    // The following is all the code required to
-    // Add all the player hand panel to the player hand horizontal box.
-
-    mainPanel_.pack_start(cardFrame_);
-
     // Used for initializtion of table and hand cards
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
-    const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
+    //const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
 
-    // Set the look of the frame.
-    cardFrame_.set_label( "Your hand:" );
-    cardFrame_.set_label_align( Gtk::ALIGN_CENTER, Gtk::ALIGN_TOP );
-    cardFrame_.set_shadow_type( Gtk::SHADOW_ETCHED_OUT );
-
-    // Initialize the 13 null card buttons and place them in the box.
-    for (int i = 0; i < 13; ++i) {
-        card_[i] = new Gtk::Image( nullCardPixbuf);
-        button_[i].set_image( *card_[i]);
-        cardBox_.add( button_[i] );
-    } // for
-
-    // Add the horizontal box for laying out the images to the frame.
-    cardFrame_.add(cardBox_);
-
-   /* // The following is all the code required to initialize the table cards
+    // The following is all the code required to initialize the table cards
     for(int i = 0; i < 52; ++i) {
         tableCards_[i] = new Gtk::Image( nullCardPixbuf );
     }
@@ -77,23 +50,61 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
         tableSpadeCards_.add(*tableCards_[i]);
     }
 
-
     tableCardsBox_.add(tableClubCards_);
     tableCardsBox_.add(tableDaimondCards_);
     tableCardsBox_.add(tableHeartCards_);
     tableCardsBox_.add(tableSpadeCards_);
-    */
 
-    ////////////////////////////////////////////////////// Player Options Panel //////////////////////
+
+    // Add all the player buttons to the player frames
+    player_1_frame_.add(player_1_button_);
+    player_2_frame_.add(player_2_button_);
+    player_3_frame_.add(player_3_button_);
+    player_4_frame_.add(player_4_button_);
+
+    // Add the required player information labels to each frame
+
     // Add the player panel widgets to playerPanel_
-   /* playerPanel_.add(player_1_button_);
-    playerPanel_.add(player_2_button_);
-    playerPanel_.add(player_3_button_);
-    playerPanel_.add(player_4_button_); */
+    playerPanel_.add(player_1_frame_);
+    playerPanel_.add(player_2_frame_);
+    playerPanel_.add(player_3_frame_);
+    playerPanel_.add(player_4_frame_);
+
+    // The following is all the code required to
+    // Add all the player hand panel to the player hand horizontal box.
+
+    // Set the look of the frame.
+    playerHandFrame_.set_label( "Your hand:" );
+    playerHandFrame_.set_label_align( Gtk::ALIGN_CENTER, Gtk::ALIGN_TOP );
+    playerHandFrame_.set_shadow_type( Gtk::SHADOW_ETCHED_OUT );
+
+    // Initialize the 13 null card buttons and place them in the box.
+    for (int i = 0; i < 13; ++i) {
+        playerHand_[i] = new Gtk::Image(nullCardPixbuf);
+        playerHandButton_[i].set_image( *playerHand_[i]);
+        cardBox_.add( playerHandButton_[i] );
+    } // for
+
+    // Add the horizontal box for laying out the images to the frame.
+    playerHandFrame_.add(cardBox_);
+
+    // Add all the horizontal panels to the main vertical panel
+    mainPanel_.add(topPanel_);
+    mainPanel_.add(tableCardsBox_);
+    mainPanel_.add(playerPanel_);
+    mainPanel_.add(playerHandFrame_);
+
+    // Add the main vertical panel to the window
+    add(mainPanel_);
 
     // Associate button "clicked" events with local onButtonClicked() method defined below.
     startNewGameButtonWithSeedButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::startNewGameButtonWithSeedButtonClicked));
     endCurrentGameButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::endCurrentGameButtonClicked));
+
+    player_1_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_1_buttonClicked));
+    player_2_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_2_buttonClicked));
+    player_3_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_3_buttonClicked));
+    player_4_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_4_buttonClicked));
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -107,15 +118,11 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
 
 View::~View() {
     for(int i = 0; i < 13; ++i) {
-        if(!card_[i]) {
-            delete card_[i];
-        }
+        delete playerHand_[i];
     }
 
     for(int i = 0; i < 52; ++i) {
-        if(!tableCards_[i]) {
-            delete tableCards_[i];
-        }
+        delete tableCards_[i];
     }
 }
 
@@ -224,14 +231,14 @@ void View::update() {
         vector<Card> hand = model_->activePlayer()->hand();
 
         for (int i = 0; i < hand.size(); ++i) {
-            const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
+            const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(hand[i].getRank(), hand[i].getSuit());
 
-            card_[i]->set(cardPixbuf);
+            playerHand_[i]->set(cardPixbuf);
 
         }
     }
 
-   /* // 2) Now get relevent table card data from model
+   // 2) Now get relevent table card data from model
     vector<Card> tableCards = model_->tableCards().tableCards();
 
     if(tableCards.size() != 0) {
@@ -274,7 +281,7 @@ void View::update() {
             tableCardsBox_.add(tableHeartCards_);
             tableCardsBox_.add(tableSpadeCards_);
         }
-    }*/
+    }
 
 }
 
@@ -418,9 +425,55 @@ void View::startNewGameButtonWithSeedButtonClicked() {
 
     controller_->startNewGameButtonWithSeedButtonClicked(seed, player_1_type, player_2_type, player_3_type, player_4_type);
 
+    // Set the button labels to rage
+    player_1_button_.set_label("Rage!");
+    player_2_button_.set_label("Rage!");
+    player_3_button_.set_label("Rage!");
+    player_4_button_.set_label("Rage!");
+
 
 }
 
 void View::endCurrentGameButtonClicked() {
     cout << "end current game button was clicked!" << endl;
+}
+
+void View::player_1_buttonClicked() {
+    if(player_1_button_.get_label() == "Rage!") {
+
+    } else if(player_1_button_.get_label() == "Human") {
+        player_1_button_.set_label("Computer");
+    } else if(player_1_button_.get_label() == "Computer") {
+        player_1_button_.set_label("Human");
+    }
+}
+
+void View::player_2_buttonClicked() {
+    if(player_2_button_.get_label() == "Rage!") {
+
+    } else if(player_2_button_.get_label() == "Human") {
+        player_2_button_.set_label("Computer");
+    } else if(player_2_button_.get_label() == "Computer") {
+        player_2_button_.set_label("Human");
+    }
+}
+
+void View::player_3_buttonClicked() {
+    if(player_3_button_.get_label() == "Rage!") {
+
+    } else if(player_3_button_.get_label() == "Human") {
+        player_3_button_.set_label("Computer");
+    } else if(player_3_button_.get_label() == "Computer") {
+        player_3_button_.set_label("Human");
+    }
+}
+
+void View::player_4_buttonClicked() {
+    if(player_4_button_.get_label() == "Rage!") {
+
+    } else if(player_4_button_.get_label() == "Human") {
+        player_4_button_.set_label("Computer");
+    } else if(player_4_button_.get_label() == "Computer") {
+        player_4_button_.set_label("Human");
+    }
 }

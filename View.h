@@ -69,6 +69,16 @@ private:
     Gtk::Button player_3_button_;
     Gtk::Button player_4_button_;
 
+    // The following are labels for displaying player scores
+    Gtk::Label player_1_score_;
+
+    // We will display all the buttons in a frame
+    // where we can also display the player's score and discards
+    Gtk::Frame player_1_frame_;
+    Gtk::Frame player_2_frame_;
+    Gtk::Frame player_3_frame_;
+    Gtk::Frame player_4_frame_;
+
     // Now, we have the horizontal panel to display the cards that have been played
     // on the table. This itself is a vertical panel that has four horizontal panel inside
     // of it. There are four horizontal panels because there are four suits. Each panel
@@ -80,11 +90,8 @@ private:
     Gtk::HBox tableClubCards_;
     Gtk::HBox tableSpadeCards_;
 
-    Gtk::Frame tableDaimondCardsFrame_;
-    Gtk::Frame tableClubCardsFrame_;
-    Gtk::Frame tableSpadeCardsFrame_;
-    Gtk::Frame tableHeartCardsFrame_;
-
+    // These are the images for all 52 cards that are on the
+    // table. Initially, all these images are empty
     Gtk::Image * tableCards_[52];
 
 
@@ -94,13 +101,14 @@ private:
     Gtk::HBox cardBox_;
 
     // Member widgets for the player hand panel (which is the last panel)
-    Gtk::Image * card_[13]; // Images to display
-    Gtk::Button button_[13]; // Buttons for each card in the hand
-    Gtk::Frame cardFrame_; // Create a niced framed border for the box
+    Gtk::Image *playerHand_[13]; // Images to display
+    Gtk::Button playerHandButton_[13]; // Buttons for each card in the hand
+    Gtk::Frame playerHandFrame_; // Create a niced framed border for the box
 
     // Signal handlers
-    void endCurrentGameButtonClicked();
     void startNewGameButtonWithSeedButtonClicked();
+    void endCurrentGameButtonClicked();
+
     void player_1_buttonClicked();
     void player_2_buttonClicked();
     void player_3_buttonClicked();
