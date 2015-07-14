@@ -15,6 +15,11 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
     set_title("Straights UI");
     set_border_width(20);
 
+    // Add the main vertical panel to the window
+    add(mainPanel_);
+
+    /////////////////////////////////////////// Top Panel /////////////////////////////////
+    mainPanel_.pack_start(topPanel_);
 
     // Add the top panel widgets to topPanel_
     topPanel_.add(startNewGameButtonWithSeedButton_);
@@ -25,11 +30,33 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
     topPanel_.add(seedField_);
     topPanel_.add(endCurrentGameButton_);
 
+    ///////////////////////////////////////// Player's Hand Panel //////////////////////////
+
+    // The following is all the code required to
+    // Add all the player hand panel to the player hand horizontal box.
+
+    mainPanel_.pack_start(cardFrame_);
+
     // Used for initializtion of table and hand cards
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
     const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
 
-    // The following is all the code required to initialize the table cards
+    // Set the look of the frame.
+    cardFrame_.set_label( "Your hand:" );
+    cardFrame_.set_label_align( Gtk::ALIGN_CENTER, Gtk::ALIGN_TOP );
+    cardFrame_.set_shadow_type( Gtk::SHADOW_ETCHED_OUT );
+
+    // Initialize the 13 null card buttons and place them in the box.
+    for (int i = 0; i < 13; ++i) {
+        card_[i] = new Gtk::Image( nullCardPixbuf);
+        button_[i].set_image( *card_[i]);
+        cardBox_.add( button_[i] );
+    } // for
+
+    // Add the horizontal box for laying out the images to the frame.
+    cardFrame_.add(cardBox_);
+
+   /* // The following is all the code required to initialize the table cards
     for(int i = 0; i < 52; ++i) {
         tableCards_[i] = new Gtk::Image( nullCardPixbuf );
     }
@@ -55,38 +82,14 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
     tableCardsBox_.add(tableDaimondCards_);
     tableCardsBox_.add(tableHeartCards_);
     tableCardsBox_.add(tableSpadeCards_);
+    */
 
+    ////////////////////////////////////////////////////// Player Options Panel //////////////////////
     // Add the player panel widgets to playerPanel_
-    playerPanel_.add(player_1_button_);
+   /* playerPanel_.add(player_1_button_);
     playerPanel_.add(player_2_button_);
     playerPanel_.add(player_3_button_);
-    playerPanel_.add(player_4_button_);
-
-    // The following is all the code required to
-    // Add all the player hand panel to the player hand horizontal box.
-
-    // Set the look of the frame.
-    cardFrame_.set_label( "Your hand:" );
-    cardFrame_.set_label_align( Gtk::ALIGN_CENTER, Gtk::ALIGN_TOP );
-    cardFrame_.set_shadow_type( Gtk::SHADOW_ETCHED_OUT );
-
-    // Initialize the 13 null card buttons and place them in the box.
-    for (int i = 0; i < 13; ++i) {
-        card_[i] = new Gtk::Image( nullCardPixbuf);
-        button_[i].set_image( *card_[i]);
-        cardBox_.add( button_[i] );
-    } // for
-
-    // Add the horizontal box for laying out the images to the frame.
-    cardFrame_.add(cardBox_);
-
-    // Add all the horizontal panels to the main vertical panel
-    mainPanel_.add(topPanel_);
-    mainPanel_.add(playerPanel_);
-    mainPanel_.add(cardFrame_);
-
-    // Add the main vertical panel to the window
-    add(mainPanel_);
+    playerPanel_.add(player_4_button_); */
 
     // Associate button "clicked" events with local onButtonClicked() method defined below.
     startNewGameButtonWithSeedButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::startNewGameButtonWithSeedButtonClicked));
@@ -104,11 +107,15 @@ tableCardsBox_(true, 5), startNewGameButtonWithSeedButton_("Start new game with 
 
 View::~View() {
     for(int i = 0; i < 13; ++i) {
-        delete card_[i];
+        if(!card_[i]) {
+            delete card_[i];
+        }
     }
 
     for(int i = 0; i < 52; ++i) {
-        delete tableCards_[i];
+        if(!tableCards_[i]) {
+            delete tableCards_[i];
+        }
     }
 }
 
