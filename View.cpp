@@ -10,8 +10,8 @@ using namespace std;
 View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
 tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
  player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(),
-player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
-player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
+player_1_score_("Score: 00"), player_2_score_("Score: 00"),player_3_score_("Score: 00"), player_4_score_("Score: 00"),
+player_1_discards_("Discards: 00"), player_2_discards_("Discards: 00"), player_3_discards_("Discards: 00"),player_4_discards_("Discards: 00"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
 playerHandFrame_("Your hand")
 
@@ -95,10 +95,6 @@ playerHandFrame_("Your hand")
 
     // The following is all the code required to
     // Add all the player hand panel to the player hand horizontal box.
-
-    // Set the look of the frame.
-    playerHandFrame_.set_label_align( Gtk::ALIGN_CENTER, Gtk::ALIGN_TOP );
-    playerHandFrame_.set_shadow_type( Gtk::SHADOW_ETCHED_OUT );
 
     // Initialize the 13 null card buttons and place them in the box.
     for (int i = 0; i < 13; ++i) {
@@ -293,21 +289,37 @@ void View::update() {
 
     //Update player scores and discards
     int playerNumber = model_->activePlayer()->playerNumber();
-    int score = model_->getScore(model_->activePlayer()->playerNumber());
-    int discards = model_->activePlayer()->discards().size();
+    int scoreAsInt = model_->getScore(model_->activePlayer()->playerNumber());
+    int discardsAsInt = model_->activePlayer()->discards().size();
+
+    string scoreAsString;          // string which will contain the result
+    string discardsAsString;
+
+    ostringstream convert;   // stream used for the conversion
+
+    convert << scoreAsInt;      // insert the textual representation of 'Number' in the characters in the stream
+    scoreAsString = convert.str();
+
+    convert.flush();
+
+    convert << discardsAsInt;
+    discardsAsString = convert.str();
+
+
+
 
     if(playerNumber == 1) {
-        player_1_score_.set_label("Score: " + score);
-        player_1_score_.set_label("discards: " + discards);
+        player_1_score_.set_label("Score: " + scoreAsString);
+        player_1_discards_.set_label("discards: " + discardsAsString);
     } else if(playerNumber == 2) {
-        player_2_score_.set_label("Score: " + score);
-        player_2_score_.set_label("discards: " + discards);
+        player_2_score_.set_label("Score: " + scoreAsString);
+        player_2_discards_.set_label("discards: " + discardsAsString);
     } else if(playerNumber == 3) {
-        player_3_score_.set_label("Score: " + score);
-        player_3_score_.set_label("discards: " + discards);
+        player_3_score_.set_label("Score: " + scoreAsString);
+        player_3_discards_.set_label("discards: " + discardsAsString);
     } else if(playerNumber == 4) {
-        player_4_score_.set_label("Score: " + score);
-        player_4_score_.set_label("discards: " + discards);
+        player_4_score_.set_label("Score: " + scoreAsString);
+        player_4_discards_.set_label("discards: " + discardsAsString);
     }
 
 
