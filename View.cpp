@@ -106,6 +106,11 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
     player_3_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_3_buttonClicked));
     player_4_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_4_buttonClicked));
 
+    // For all the cards in the player's hand, connect it to a signal
+    for(int i = 0; i < 13; ++i) {
+        playerHandButton_[i].signal_clicked().connect(sigc::mem_fun(*this, &View::playerHandButtonClicked));
+    }
+
     // The final step is to display the buttons (they display themselves)
     show_all();
 
@@ -435,12 +440,12 @@ void View::startNewGameButtonWithSeedButtonClicked() {
 }
 
 void View::endCurrentGameButtonClicked() {
-    cout << "end current game button was clicked!" << endl;
+    controller_->endCurrentGameButtonClicked();
 }
 
 void View::player_1_buttonClicked() {
     if(player_1_button_.get_label() == "Rage!") {
-
+        controller_->playerRageButtonClicked(1);
     } else if(player_1_button_.get_label() == "Human") {
         player_1_button_.set_label("Computer");
     } else if(player_1_button_.get_label() == "Computer") {
@@ -450,7 +455,7 @@ void View::player_1_buttonClicked() {
 
 void View::player_2_buttonClicked() {
     if(player_2_button_.get_label() == "Rage!") {
-
+        controller_->playerRageButtonClicked(2);
     } else if(player_2_button_.get_label() == "Human") {
         player_2_button_.set_label("Computer");
     } else if(player_2_button_.get_label() == "Computer") {
@@ -460,7 +465,7 @@ void View::player_2_buttonClicked() {
 
 void View::player_3_buttonClicked() {
     if(player_3_button_.get_label() == "Rage!") {
-
+        controller_->playerRageButtonClicked(3);
     } else if(player_3_button_.get_label() == "Human") {
         player_3_button_.set_label("Computer");
     } else if(player_3_button_.get_label() == "Computer") {
@@ -470,10 +475,14 @@ void View::player_3_buttonClicked() {
 
 void View::player_4_buttonClicked() {
     if(player_4_button_.get_label() == "Rage!") {
-
+        controller_->playerRageButtonClicked(4);
     } else if(player_4_button_.get_label() == "Human") {
         player_4_button_.set_label("Computer");
     } else if(player_4_button_.get_label() == "Computer") {
         player_4_button_.set_label("Human");
     }
+}
+
+void View::playerHandButtonClicked() {
+    //controller_->playerHandButtonClicked(cardIndex);
 }

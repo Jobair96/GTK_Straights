@@ -11,7 +11,8 @@ public:
 
     void startNewGameButtonWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string);
     void endCurrentGameButtonClicked();
-    void playerTypeButtonClicked(const int);
+    void playerRageButtonClicked(const int);
+    void playerHandButtonClicked(const int);
 
 
 

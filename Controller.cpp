@@ -125,3 +125,15 @@ void Controller::startNewGameButtonWithSeedButtonClicked(
 
 }
 
+void Controller::playerRageButtonClicked(const int playerNumber) {
+
+}
+
+void Controller::endCurrentGameButtonClicked() {
+    model_->clearTable();
+    model_->resetPlayers();
+    model_->resetLegalPlays();
+}
+
+void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
+}

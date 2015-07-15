@@ -114,6 +114,8 @@ private:
     void player_3_buttonClicked();
     void player_4_buttonClicked();
 
+    void playerHandButtonClicked();
+
 }; // View
 
 #endif //VIEW_H
