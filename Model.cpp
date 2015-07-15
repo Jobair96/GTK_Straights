@@ -4,7 +4,7 @@
 using namespace std;
 
 Model::Model() : deck_(), player_1_(NULL), player_2_(NULL), player_3_(NULL), player_4_(NULL) {
-
+    Model::setLegalPlay(Card(SPADE, SEVEN));
 }
 
 Model::~Model() {
@@ -197,7 +197,7 @@ bool Model::hasLegalPlay() const {
 }
 
 void Model::updateLegalPlays(Card card) {
-    if (legalPlays_.size() == 1) {
+    if (card == Card(SPADE, SEVEN)) {
         setLegalPlay(Card(DIAMOND,SEVEN));
         setLegalPlay(Card(HEART,SEVEN));
         setLegalPlay(Card(CLUB,SEVEN));
@@ -210,6 +210,8 @@ void Model::updateLegalPlays(Card card) {
     if (card.getRank() < 12) {
         legalPlays_.push_back(Card(card.getSuit(), (Rank) (card.getRank() + 1)));
     }
+
+    notify();
 }
 
 void Model::resetLegalPlays() {
@@ -227,6 +229,8 @@ bool Model::isEndOfGame() const {
 
 void Model::addCardToTable(const Card card) {
     tableCards_.addCard(card);
+
+    notify();
 }
 
 void Model::updateActivePlayer() {
@@ -240,6 +244,8 @@ void Model::updateActivePlayer() {
     } else if(currentActivePlayer == player_4_) {
         activePlayer_ = player_1_;
     }
+
+    notify();
 }
 
 void Model::updateScore(int playerNumber) {

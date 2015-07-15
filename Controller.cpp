@@ -136,4 +136,10 @@ void Controller::endCurrentGameButtonClicked() {
 }
 
 void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
+    Card card = model_->activePlayer()->hand().at(indexOfCardPlayed);
+
+    model_->activePlayer()->removeCard(card);
+    model_->addCardToTable(card);
+    model_->updateLegalPlays(card);
+    model_->updateActivePlayer();
 }

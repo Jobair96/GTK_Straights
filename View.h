@@ -6,6 +6,7 @@
 #define VIEW_H
 
 #include <gtkmm.h>
+#include <gtkmm/label.h>
 #include "Observer.h"
 #include "DeckGUI.h"
 
@@ -71,6 +72,22 @@ private:
 
     // The following are labels for displaying player scores
     Gtk::Label player_1_score_;
+    Gtk::Label player_1_discards_;
+
+    Gtk::Label player_2_score_;
+    Gtk::Label player_2_discards_;
+
+    Gtk::Label player_3_score_;
+    Gtk::Label player_3_discards_;
+
+
+    Gtk::Label player_4_score_;
+    Gtk::Label player_4_discards_;
+
+    Gtk::VBox player_1_box_;
+    Gtk::VBox player_2_box_;
+    Gtk::VBox player_3_box_;
+    Gtk::VBox player_4_box_;
 
     // We will display all the buttons in a frame
     // where we can also display the player's score and discards
@@ -114,7 +131,9 @@ private:
     void player_3_buttonClicked();
     void player_4_buttonClicked();
 
-    void playerHandButtonClicked();
+    void playerHandButtonClicked(int);
+
+    void toggleIllegalPlays();
 
 }; // View
 

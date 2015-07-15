@@ -9,7 +9,13 @@ using namespace std;
 
 View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
 tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
- player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(), player_1_score_("0 points") {
+ player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(),
+player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
+player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
+player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
+playerHandFrame_("Your hand")
+
+{
 
     // Sets some properties of the window
     set_title("Straights UI");
@@ -27,11 +33,10 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
 
     // Used for initializtion of table and hand cards
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
-    //const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(TEN, SPADE);
 
     // The following is all the code required to initialize the table cards
     for(int i = 0; i < 52; ++i) {
-        tableCards_[i] = new Gtk::Image( nullCardPixbuf );
+        tableCards_[i] = new Gtk::Image(nullCardPixbuf);
     }
 
     for(int i = 0; i < 13; ++i) {
@@ -50,19 +55,37 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
         tableSpadeCards_.add(*tableCards_[i]);
     }
 
-    tableCardsBox_.add(tableClubCards_);
-    tableCardsBox_.add(tableDaimondCards_);
-    tableCardsBox_.add(tableHeartCards_);
-    tableCardsBox_.add(tableSpadeCards_);
+    tableCardsBox_.pack_start(tableClubCards_, true, true, 10);
+    tableCardsBox_.pack_start(tableDaimondCards_, true, true, 10);
+    tableCardsBox_.pack_start(tableHeartCards_, true, true, 10);
+    tableCardsBox_.pack_start(tableSpadeCards_, true, true, 10);
 
 
-    // Add all the player buttons to the player frames
-    player_1_frame_.add(player_1_button_);
-    player_2_frame_.add(player_2_button_);
-    player_3_frame_.add(player_3_button_);
-    player_4_frame_.add(player_4_button_);
+    // Add all the player buttons to the player vbox
+    player_1_box_.add(player_1_button_);
+    player_2_box_.add(player_2_button_);
+    player_3_box_.add(player_3_button_);
+    player_4_box_.add(player_4_button_);
 
-    // Add the required player information labels to each frame
+    // Add the required player information labels to each box
+    player_1_box_.add(player_1_score_);
+    player_1_box_.add(player_1_discards_);
+
+    player_2_box_.add(player_2_score_);
+    player_2_box_.add(player_2_discards_);
+
+
+    player_3_box_.add(player_3_score_);
+    player_3_box_.add(player_3_discards_);
+
+    player_4_box_.add(player_4_score_);
+    player_4_box_.add(player_4_discards_);
+
+    // Add the above boxes to the corresponding frames
+    player_1_frame_.add(player_1_box_);
+    player_2_frame_.add(player_2_box_);
+    player_3_frame_.add(player_3_box_);
+    player_4_frame_.add(player_4_box_);
 
     // Add the player panel widgets to playerPanel_
     playerPanel_.add(player_1_frame_);
@@ -74,7 +97,6 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
     // Add all the player hand panel to the player hand horizontal box.
 
     // Set the look of the frame.
-    playerHandFrame_.set_label( "Your hand:" );
     playerHandFrame_.set_label_align( Gtk::ALIGN_CENTER, Gtk::ALIGN_TOP );
     playerHandFrame_.set_shadow_type( Gtk::SHADOW_ETCHED_OUT );
 
@@ -108,7 +130,8 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
 
     // For all the cards in the player's hand, connect it to a signal
     for(int i = 0; i < 13; ++i) {
-        playerHandButton_[i].signal_clicked().connect(sigc::mem_fun(*this, &View::playerHandButtonClicked));
+        playerHandButton_[i].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::playerHandButtonClicked), i));
+
     }
 
     // The final step is to display the buttons (they display themselves)
@@ -123,11 +146,17 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
 
 View::~View() {
     for(int i = 0; i < 13; ++i) {
-        delete playerHand_[i];
+        if(!playerHand_[i]) {
+            delete playerHand_[i];
+            playerHand_[i] = nullptr;
+        }
     }
 
     for(int i = 0; i < 52; ++i) {
-        delete tableCards_[i];
+        if(!tableCards_[i]) {
+            delete tableCards_[i];
+            tableCards_[i] = nullptr;
+        }
     }
 }
 
@@ -250,43 +279,40 @@ void View::update() {
         for (int i = 0; i < tableCards.size(); ++i) {
             Card card = Card(tableCards[i].getSuit(), tableCards[i].getRank());
 
-            const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(tableCards[i].getRank(),
-                                                                           tableCards[i].getSuit());
+            Rank rank = tableCards[i].getRank();
+            Suit suit = tableCards[i].getSuit();
+
+            const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(rank, suit);
 
             // Get index of this card
-            int index = card.getSuit() * 4 + card.getRank() * 4;
+            int index = (int) rank + ((int) suit * 13);
 
-            // delete previous card
-            if (nullptr != tableCards_[index]) {
-                delete tableCards_[index];
-                tableCards_[i] = nullptr;
-            }
-
-            tableCards_[i] = new Gtk::Image(cardPixbuf);
-
-            for (int i = 0; i < 13; ++i) {
-                tableClubCards_.add(*tableCards_[i]);
-            }
-
-            for (int i = 13; i < 26; ++i) {
-                tableDaimondCards_.add(*tableCards_[i]);
-            }
-
-            for (int i = 26; i < 39; ++i) {
-                tableHeartCards_.add(*tableCards_[i]);
-            }
-
-            for (int i = 39; i < 52; ++i) {
-                tableSpadeCards_.add(*tableCards_[i]);
-            }
-
-
-            tableCardsBox_.add(tableClubCards_);
-            tableCardsBox_.add(tableDaimondCards_);
-            tableCardsBox_.add(tableHeartCards_);
-            tableCardsBox_.add(tableSpadeCards_);
+            tableCards_[index]->set(cardPixbuf);
         }
     }
+
+    //Update player scores and discards
+    int playerNumber = model_->activePlayer()->playerNumber();
+    int score = model_->getScore(model_->activePlayer()->playerNumber());
+    int discards = model_->activePlayer()->discards().size();
+
+    if(playerNumber == 1) {
+        player_1_score_.set_label("Score: " + score);
+        player_1_score_.set_label("discards: " + discards);
+    } else if(playerNumber == 2) {
+        player_2_score_.set_label("Score: " + score);
+        player_2_score_.set_label("discards: " + discards);
+    } else if(playerNumber == 3) {
+        player_3_score_.set_label("Score: " + score);
+        player_3_score_.set_label("discards: " + discards);
+    } else if(playerNumber == 4) {
+        player_4_score_.set_label("Score: " + score);
+        player_4_score_.set_label("discards: " + discards);
+    }
+
+
+
+    View::toggleIllegalPlays();
 
 }
 
@@ -483,6 +509,27 @@ void View::player_4_buttonClicked() {
     }
 }
 
-void View::playerHandButtonClicked() {
-    //controller_->playerHandButtonClicked(cardIndex);
+void View::playerHandButtonClicked(int indexOfCardChosen) {
+    controller_->playerHandButtonClicked(indexOfCardChosen);
+}
+
+void View::toggleIllegalPlays() {
+    vector<Card> hand = model_->activePlayer()->hand();
+
+    // Reset toggle sensitivity
+    for(int i = 0; i < hand.size(); ++i) {
+        playerHandButton_[i].set_sensitive(true);
+    }
+
+    if(!model_->hasLegalPlay()) {
+        for(int i = 0; i < hand.size(); ++i) {
+            playerHandButton_[i].set_sensitive(true);
+        }
+    } else {
+        for (int i = 0; i < hand.size(); ++i) {
+            if (!controller_->isLegalPlay(hand.at(i))) {
+                playerHandButton_[i].set_sensitive(false);
+            }
+        }
+    }
 }
