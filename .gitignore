@@ -1,5 +1,7 @@
 .idea/
 *.o
 *.txt
+Debug/Project_1
+Debug/Debug/Project_1
 straights
 correctStraights
