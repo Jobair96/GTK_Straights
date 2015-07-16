@@ -101,7 +101,7 @@ int Model::getActivePlayerNumber() const {
 }
 
 bool Model::isActiveHumanPlayer() const {
-    return "h" == playerTypes_[getActivePlayerNumber() - 1];
+    return "Human" == playerTypes_[getActivePlayerNumber() - 1];
 }
 
 Deck Model::deck() const {
@@ -266,7 +266,7 @@ void Model::resetPlayers() {
 void Model::replaceCurrentHumanWithComputer() {
     int playerNumber = getActivePlayerNumber();
 
-    playerTypes_[playerNumber - 1] = "c";
+    playerTypes_[playerNumber - 1] = "Computer";
 
     Player *currentPlayer = activePlayer();
 

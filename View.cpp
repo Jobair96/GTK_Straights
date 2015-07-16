@@ -255,9 +255,15 @@ void View::update() {
     // 3) Also Update every player's points
     // 4) Also update every player's discard number
 
+    // The following is for if the current player is a computer
+
+    if (!model_->isActiveHumanPlayer()){
+        return;
+    }
+
 
     // 1) If player is human, then show hand, otherwise do nothing
-    if(!model_->isActiveHumanPlayer()) {
+    if(model_->isActiveHumanPlayer()) {
         vector<Card> hand = model_->activePlayer()->hand();
 
         for (int i = 0; i < hand.size(); ++i) {
@@ -334,11 +340,15 @@ void View::update() {
     // Check if end of round
     if(controller_->isEndOfRound()) {
         // Show dialog box showing end of round
+        Gtk::Dialog endOfRoundDialog("Round has ended.", true);
+
+        cout << "Round has ended" << endl;
 
     }
 
     if(controller_->isEndOfGame()) {
         // Show dialog box showing end of game
+        Gtk::Dialog endOfRoundDialog("Game has ended.", true);
     }
 
 
@@ -493,7 +503,6 @@ void View::startNewGameButtonWithSeedButtonClicked() {
     startNewGameButtonWithSeedButton_.set_sensitive(false);
 
     setActivePlayerOptions();
-
 }
 
 void View::endCurrentGameButtonClicked() {
