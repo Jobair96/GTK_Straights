@@ -99,8 +99,8 @@ void Controller::completeComputerDiscard() {
 }
 
 void Controller::discard(const Card card) {
-    model_->activePlayer()->removeCard(card);
-    model_->activePlayer()->discard(card);
+    model_->removeCardFromActivePlayer(card);
+    model_->discardFromActivePlayer(card);
     model_->updateActivePlayer();
 }
 
@@ -123,10 +123,18 @@ void Controller::startNewGameButtonWithSeedButtonClicked(
     // Initialize active player to player with seven of spades
     model_->setActivePlayer(model_->getPlayerWithCard(Card(SPADE, SEVEN))->playerNumber());
 
+    if (!model_->isActiveHumanPlayer()){
+        if(model_->hasLegalPlay()) {
+            Controller::completeComputerPlayCard();
+        } else {
+            Controller::completeComputerDiscard();
+        }
+    }
+
 }
 
 void Controller::playerRageButtonClicked(const int playerNumber) {
-
+    model_->replaceCurrentHumanWithComputer();
 }
 
 void Controller::endCurrentGameButtonClicked() {
@@ -138,8 +146,20 @@ void Controller::endCurrentGameButtonClicked() {
 void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
     Card card = model_->activePlayer()->hand().at(indexOfCardPlayed);
 
-    model_->activePlayer()->removeCard(card);
-    model_->addCardToTable(card);
-    model_->updateLegalPlays(card);
-    model_->updateActivePlayer();
+    if(model_->hasLegalPlay()) {
+        model_->addCardToTable(card);
+        model_->updateLegalPlays(card);
+        model_->removeCardFromActivePlayer(card);
+        model_->updateActivePlayer();
+    } else {
+        Controller::discard(card);
+    }
+
+    if (!model_->isActiveHumanPlayer()){
+        if(model_->hasLegalPlay()) {
+            Controller::completeComputerPlayCard();
+        } else {
+            Controller::completeComputerDiscard();
+        }
+    }
 }

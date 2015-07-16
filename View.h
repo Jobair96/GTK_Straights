@@ -5,6 +5,9 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+//3543
+//2323
+
 #include <gtkmm.h>
 #include <gtkmm/label.h>
 #include "Observer.h"
@@ -134,6 +137,8 @@ private:
     void playerHandButtonClicked(int);
 
     void toggleIllegalPlays();
+
+    void setActivePlayerOptions();
 
 }; // View
 
