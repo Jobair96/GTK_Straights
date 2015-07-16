@@ -10,8 +10,8 @@ using namespace std;
 View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
 tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
  player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(),
-player_1_score_("Score: 00"), player_2_score_("Score: 00"),player_3_score_("Score: 00"), player_4_score_("Score: 00"),
-player_1_discards_("Discards: 00"), player_2_discards_("Discards: 00"), player_3_discards_("Discards: 00"),player_4_discards_("Discards: 00"),
+player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
+player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
 playerHandFrame_("Your hand")
 
@@ -266,6 +266,11 @@ void View::update() {
             playerHand_[i]->set(cardPixbuf);
 
         }
+
+        for(int i = hand.size(); i < 13; ++i) {
+            const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
+            playerHand_[i]->set(nullCardPixbuf);
+        }
     }
 
    // 2) Now get relevent table card data from model
@@ -300,7 +305,7 @@ void View::update() {
     convert << scoreAsInt;      // insert the textual representation of 'Number' in the characters in the stream
     scoreAsString = convert.str();
 
-    convert.flush();
+    convert.str("");
 
     convert << discardsAsInt;
     discardsAsString = convert.str();
@@ -310,21 +315,32 @@ void View::update() {
 
     if(playerNumber == 1) {
         player_1_score_.set_label("Score: " + scoreAsString);
-        player_1_discards_.set_label("discards: " + discardsAsString);
+        player_1_discards_.set_label("Discards: " + discardsAsString);
     } else if(playerNumber == 2) {
         player_2_score_.set_label("Score: " + scoreAsString);
-        player_2_discards_.set_label("discards: " + discardsAsString);
+        player_2_discards_.set_label("Discards: " + discardsAsString);
     } else if(playerNumber == 3) {
         player_3_score_.set_label("Score: " + scoreAsString);
-        player_3_discards_.set_label("discards: " + discardsAsString);
+        player_3_discards_.set_label("Discards: " + discardsAsString);
     } else if(playerNumber == 4) {
         player_4_score_.set_label("Score: " + scoreAsString);
-        player_4_discards_.set_label("discards: " + discardsAsString);
+        player_4_discards_.set_label("Discards: " + discardsAsString);
     }
 
-
+    setActivePlayerOptions();
 
     View::toggleIllegalPlays();
+
+    // Check if end of round
+    if(controller_->isEndOfRound()) {
+        // Show dialog box showing end of round
+
+    }
+
+    if(controller_->isEndOfGame()) {
+        // Show dialog box showing end of game
+    }
+
 
 }
 
@@ -474,11 +490,16 @@ void View::startNewGameButtonWithSeedButtonClicked() {
     player_3_button_.set_label("Rage!");
     player_4_button_.set_label("Rage!");
 
+    startNewGameButtonWithSeedButton_.set_sensitive(false);
+
+    setActivePlayerOptions();
 
 }
 
 void View::endCurrentGameButtonClicked() {
     controller_->endCurrentGameButtonClicked();
+
+    startNewGameButtonWithSeedButton_.set_sensitive(true);
 }
 
 void View::player_1_buttonClicked() {
@@ -529,8 +550,8 @@ void View::toggleIllegalPlays() {
     vector<Card> hand = model_->activePlayer()->hand();
 
     // Reset toggle sensitivity
-    for(int i = 0; i < hand.size(); ++i) {
-        playerHandButton_[i].set_sensitive(true);
+    for(int i = 0; i < 13; ++i) {
+        playerHandButton_[i].set_sensitive(false);
     }
 
     if(!model_->hasLegalPlay()) {
@@ -539,9 +560,35 @@ void View::toggleIllegalPlays() {
         }
     } else {
         for (int i = 0; i < hand.size(); ++i) {
-            if (!controller_->isLegalPlay(hand.at(i))) {
-                playerHandButton_[i].set_sensitive(false);
+            if (controller_->isLegalPlay(hand.at(i))) {
+                playerHandButton_[i].set_sensitive(true);
             }
         }
+    }
+}
+
+void View::setActivePlayerOptions() {
+
+    player_1_button_.set_sensitive(false);
+    player_2_button_.set_sensitive(false);
+    player_3_button_.set_sensitive(false);
+    player_4_button_.set_sensitive(false);
+
+    int activePlayerNumber = model_->activePlayer()->playerNumber();
+
+    if(activePlayerNumber == 1) {
+        player_1_button_.set_sensitive(true);
+    }
+
+    if(activePlayerNumber == 2) {
+        player_2_button_.set_sensitive(true);
+    }
+
+    if(activePlayerNumber == 3) {
+        player_3_button_.set_sensitive(true);
+    }
+
+    if(activePlayerNumber == 4) {
+        player_4_button_.set_sensitive(true);
     }
 }

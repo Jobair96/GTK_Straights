@@ -99,8 +99,8 @@ void Controller::completeComputerDiscard() {
 }
 
 void Controller::discard(const Card card) {
-    model_->activePlayer()->removeCard(card);
-    model_->activePlayer()->discard(card);
+    model_->removeCardFromActivePlayer(card);
+    model_->discardFromActivePlayer(card);
     model_->updateActivePlayer();
 }
 
@@ -138,8 +138,12 @@ void Controller::endCurrentGameButtonClicked() {
 void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
     Card card = model_->activePlayer()->hand().at(indexOfCardPlayed);
 
-    model_->activePlayer()->removeCard(card);
-    model_->addCardToTable(card);
-    model_->updateLegalPlays(card);
-    model_->updateActivePlayer();
+    if(model_->hasLegalPlay()) {
+        model_->addCardToTable(card);
+        model_->updateLegalPlays(card);
+        model_->removeCardFromActivePlayer(card);
+        model_->updateActivePlayer();
+    } else {
+        Controller::discard(card);
+    }
 }

@@ -274,3 +274,17 @@ void Model::replaceCurrentHumanWithComputer() {
 
     *currentPlayer = *computer;
 }
+
+void Model::removeCardFromActivePlayer(Card card) {
+    Model::activePlayer()->removeCard(card);
+
+    notify();
+
+}
+
+void Model::discardFromActivePlayer(Card card) {
+    Model::activePlayer()->discard(card);
+
+    notify();
+
+}
