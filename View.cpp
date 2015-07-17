@@ -257,10 +257,6 @@ void View::update() {
 
     // The following is for if the current player is a computer
 
-    if (!model_->isActiveHumanPlayer()){
-        return;
-    }
-
 
     // 1) If player is human, then show hand, otherwise do nothing
     if(model_->isActiveHumanPlayer()) {
@@ -296,6 +292,17 @@ void View::update() {
 
             tableCards_[index]->set(cardPixbuf);
         }
+    }
+
+    if(controller_->isEndOfRound()) {
+        // Show dialog box showing end of round
+        //Gtk::Dialog endOfRoundDialog("Round has ended.", true);
+        cout << "Round has ended" << endl;
+    }
+
+    if(controller_->isEndOfGame()) {
+        // Show dialog box showing end of game
+        Gtk::Dialog endOfRoundDialog("Game has ended.", true);
     }
 
     //Update player scores and discards
@@ -336,20 +343,6 @@ void View::update() {
     setActivePlayerOptions();
 
     View::toggleIllegalPlays();
-
-    // Check if end of round
-    if(controller_->isEndOfRound()) {
-        // Show dialog box showing end of round
-        Gtk::Dialog endOfRoundDialog("Round has ended.", true);
-
-        cout << "Round has ended" << endl;
-
-    }
-
-    if(controller_->isEndOfGame()) {
-        // Show dialog box showing end of game
-        Gtk::Dialog endOfRoundDialog("Game has ended.", true);
-    }
 
 
 }
