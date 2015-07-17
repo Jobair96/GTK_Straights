@@ -263,6 +263,20 @@ void Model::resetPlayers() {
     }
 }
 
+void Model::resetGame() {
+    deck_ = Deck();
+
+    player_1_ = NULL;
+    player_2_ = NULL;
+    player_3_ = NULL;
+    player_4_ = NULL;
+
+    tableCards_ = TableCards();
+
+    legalPlays_.clear();
+    legalPlays_ = vector<Card>();
+}
+
 void Model::replaceCurrentHumanWithComputer() {
     int playerNumber = getActivePlayerNumber();
 

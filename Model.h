@@ -62,6 +62,7 @@ public:
     void clearTable(); // clears the table's cards
     void resetPlayers(); // resets the player's hand and discards
     void resetLegalPlays(); // resets the list of legal plays
+    void resetGame(); //resets players and deck as brand new
 
     void replaceCurrentHumanWithComputer(); // passes a ragequitting player's hands, discards, and score to a new computer
 

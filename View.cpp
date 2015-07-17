@@ -304,7 +304,7 @@ void View::update() {
 
         for (int i = 1; i < 5; ++i) {
             convert << "Player " << i << "'s discards:";
-            vector<Card> discards = controller_->getDiscards(i);
+            vector<Card> discards = model_->getDiscards(i);
             if (discards.size() > 0) convert << " ";
             for (int j = 0; j < discards.size(); ++j) {
                 convert << discards.at(j);
@@ -314,9 +314,9 @@ void View::update() {
                 }
             }
             convert << endl;
-            convert << "Player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
-            controller_->updateScore(i);
-            convert << " = " << controller_->getScore(i) << endl;
+            convert << "Player " << i << "'s score: " << model_->getScore(i) << " + " << model_->getScoreGain(i);
+            model_->updateScore(i);
+            convert << " = " << model_->getScore(i) << endl;
         }
 
         roundEndSummary_.set_text(convert.str());
@@ -527,6 +527,28 @@ void View::startNewGameButtonWithSeedButtonClicked() {
 
 void View::endCurrentGameButtonClicked() {
     controller_->endCurrentGameButtonClicked();
+
+    // Used for initializtion of table and hand cards
+    const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
+
+    player_1_button_.set_label("Human");
+    player_2_button_.set_label("Human");
+    player_3_button_.set_label("Human");
+    player_4_button_.set_label("Human");
+
+    player_1_button_.set_sensitive(true);
+    player_2_button_.set_sensitive(true);
+    player_3_button_.set_sensitive(true);
+    player_4_button_.set_sensitive(true);
+
+    for(int i = 0; i < 52; ++i) {
+        tableCards_[i] = new Gtk::Image(nullCardPixbuf);
+    }
+
+    for (int i = 0; i < 13; ++i) {
+        playerHand_[i] = new Gtk::Image(nullCardPixbuf);
+        playerHandButton_[i].set_image(*playerHand_[i]);
+    }
 
     startNewGameButtonWithSeedButton_.set_sensitive(true);
 }

@@ -147,9 +147,7 @@ void Controller::playerRageButtonClicked(const int playerNumber) {
 }
 
 void Controller::endCurrentGameButtonClicked() {
-    model_->clearTable();
-    model_->resetPlayers();
-    model_->resetLegalPlays();
+    model_->resetGame();
 }
 
 void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
