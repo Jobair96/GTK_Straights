@@ -13,7 +13,7 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
 player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
 player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-playerHandFrame_("Your hand"), roundEndDialog_("Round End"), roundEndOKButton_("OK")
+playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSummary_(""), roundEndOKButton_("OK")
 
 {
 
@@ -260,10 +260,6 @@ void View::update() {
 
     // The following is for if the current player is a computer
 
-    if (!model_->isActiveHumanPlayer()){
-        return;
-    }
-
 
     // 1) If player is human, then show hand, otherwise do nothing
     if(model_->isActiveHumanPlayer()) {
@@ -301,6 +297,41 @@ void View::update() {
         }
     }
 
+    ostringstream convert;   // stream used for the conversion
+
+    // Check if end of round
+    if(controller_->isEndOfRound()) {
+
+        for (int i = 1; i < 5; ++i) {
+            convert << "Player " << i << "'s discards:";
+            vector<Card> discards = controller_->getDiscards(i);
+            if (discards.size() > 0) convert << " ";
+            for (int j = 0; j < discards.size(); ++j) {
+                convert << discards.at(j);
+
+                if (j < discards.size() - 1) {
+                    convert << " ";
+                }
+            }
+            convert << endl;
+            convert << "Player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
+            controller_->updateScore(i);
+            convert << " = " << controller_->getScore(i) << endl;
+        }
+
+        roundEndSummary_.set_text(convert.str());
+
+        roundEndDialog_.show_all();
+        roundEndDialog_.run();
+        cout << "Round has ended" << endl;
+
+    }
+
+    if(controller_->isEndOfGame()) {
+        // Show dialog box showing end of game
+        Gtk::Dialog endOfRoundDialog("Game has ended.", true);
+    }
+
     //Update player scores and discards
     int playerNumber = model_->activePlayer()->playerNumber();
     int scoreAsInt = model_->getScore(model_->activePlayer()->playerNumber());
@@ -309,7 +340,7 @@ void View::update() {
     string scoreAsString;          // string which will contain the result
     string discardsAsString;
 
-    ostringstream convert;   // stream used for the conversion
+    convert.str("");
 
     convert << scoreAsInt;      // insert the textual representation of 'Number' in the characters in the stream
     scoreAsString = convert.str();
@@ -339,37 +370,6 @@ void View::update() {
     setActivePlayerOptions();
 
     View::toggleIllegalPlays();
-
-    // Check if end of round
-    if(controller_->isEndOfRound()) {
-
-        for (int i = 1; i < 5; ++i) {
-            convert << "Player " << i << "'s discards:";
-            vector<Card> discards = controller_->getDiscards(i);
-            if (discards.size() > 0) convert << " ";
-            for (int j = 0; j < discards.size(); ++j) {
-                convert << discards.at(j);
-
-                if (j < discards.size() - 1) {
-                    convert << " ";
-                }
-            }
-            convert << endl;
-            convert << "Player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
-            controller_->updateScore(i);
-            convert << " = " << controller_->getScore(i) << endl;
-        }
-
-        roundEndSummary_.set_text(convert.str());
-
-        cout << "Round has ended" << endl;
-
-    }
-
-    if(controller_->isEndOfGame()) {
-        // Show dialog box showing end of game
-        Gtk::Dialog endOfRoundDialog("Game has ended.", true);
-    }
 
 
 }
