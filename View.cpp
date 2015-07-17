@@ -536,9 +536,6 @@ void View::startNewGameButtonWithSeedButtonClicked() {
 void View::endCurrentGameButtonClicked() {
     controller_->endCurrentGameButtonClicked();
 
-    // Used for initializtion of table and hand cards
-    const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
-
     player_1_button_.set_label("Human");
     player_2_button_.set_label("Human");
     player_3_button_.set_label("Human");
@@ -549,17 +546,18 @@ void View::endCurrentGameButtonClicked() {
     player_3_button_.set_sensitive(true);
     player_4_button_.set_sensitive(true);
 
+    const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
+
     for(int i = 0; i < 52; ++i) {
-        tableCards_[i] = new Gtk::Image(nullCardPixbuf);
+        tableCards_[i]->set(nullCardPixbuf);
     }
 
     for (int i = 0; i < 13; ++i) {
+        delete playerHand_[i];
         playerHand_[i] = new Gtk::Image(nullCardPixbuf);
         playerHandButton_[i].set_image(*playerHand_[i]);
+        playerHandButton_[i].set_sensitive(false);
     }
-
-    startNewGameButtonWithSeedButton_.set_sensitive(true);
-    endCurrentGameButton_.set_sensitive(false);
 }
 
 void View::player_1_buttonClicked() {
