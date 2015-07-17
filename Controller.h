@@ -9,23 +9,11 @@ public:
     Controller(Model *); // constructor
     ~Controller(); // destructor
 
-    void startNewGameButtonWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string);
+    void startNewGameWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string);
+    void restartGameWithSeedButtonClicked(const int);
     void endCurrentGameButtonClicked();
     void playerRageButtonClicked(const int);
     void playerHandButtonClicked(const int);
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

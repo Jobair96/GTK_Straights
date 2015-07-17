@@ -134,7 +134,7 @@ private:
     /**************************End Dialog********************************************/
 
     // Signal handlers
-    void startNewGameButtonWithSeedButtonClicked();
+    void startGameButtonWithSeedButtonClicked();
     void endCurrentGameButtonClicked();
 
     void player_1_buttonClicked();
@@ -148,6 +148,11 @@ private:
 
     void setActivePlayerOptions();
 
+    // end signal handlers
+
+    /************************Helper Functions************************/
+    int getCurrentSeed() const;
+    void resetCardsInPlay();
 }; // View
 
 #endif //VIEW_H

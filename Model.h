@@ -62,7 +62,8 @@ public:
     void clearTable(); // clears the table's cards
     void resetPlayers(); // resets the player's hand and discards
     void resetLegalPlays(); // resets the list of legal plays
-    void resetGame(); //resets players and deck as brand new
+    void restartGame(const int); //restarts the current game with the specified seed
+    void resetGame(); //ends the current game and resets players and deck as brand new
 
     void replaceCurrentHumanWithComputer(); // passes a ragequitting player's hands, discards, and score to a new computer
 
@@ -80,7 +81,11 @@ private:
 
     std::string playerTypes_[4]; // array of player types in player order
 
-    Player *getPlayer(int) const; // returns player point by player number
+    Player *getPlayer(int) const; // returns player by player number
+
+    int getPlayerNumber(Player*) const; //returns player number by player
+
+    void resetAllCards(); //resets to sorted deck, empty table, empty hands, only spade-seven legal
 };
 
 

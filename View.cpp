@@ -117,7 +117,8 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
     add(mainPanel_);
 
     // Associate button "clicked" events with local onButtonClicked() method defined below.
-    startNewGameButtonWithSeedButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::startNewGameButtonWithSeedButtonClicked));
+    startNewGameButtonWithSeedButton_.signal_clicked().connect(
+            sigc::mem_fun(*this, &View::startGameButtonWithSeedButtonClicked));
     endCurrentGameButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::endCurrentGameButtonClicked));
 
     player_1_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_1_buttonClicked));
@@ -133,9 +134,6 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
 
     roundEndDialog_.get_vbox()->add(roundEndSummary_);
     roundEndDialog_.get_vbox()->add(roundEndOKButton_);
-
-    // Disable end game button because game has not begun yet
-    endCurrentGameButton_.set_sensitive(false);
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -499,38 +497,32 @@ void View::refreshGame(int seed) {
 // When starting a new game, there are several things we must do.
 // Firstly, we gather the type of every player, then send that to the controller
 // to properly initialize each player. Afterwards,
-void View::startNewGameButtonWithSeedButtonClicked() {
+void View::startGameButtonWithSeedButtonClicked() {
+    int seed = getCurrentSeed();
 
-    // When starting a new game, we check the type of players, then
-    // send that information to the controller to initialize all the
-    // new players.
-    string player_1_type = player_1_button_.get_label();
-    string player_2_type = player_2_button_.get_label();
-    string player_3_type = player_3_button_.get_label();
-    string player_4_type = player_4_button_.get_label();
+    if (player_1_button_.get_label() != "Rage!") {
+        // When starting a new game, we check the type of players, then
+        // send that information to the controller to initialize all the
+        // new players.
+        string player_1_type = player_1_button_.get_label();
+        string player_2_type = player_2_button_.get_label();
+        string player_3_type = player_3_button_.get_label();
+        string player_4_type = player_4_button_.get_label();
 
-    // The following is to convert the seed value in the
-    // text field into an integer
-    Glib::ustring seedValueAsText = seedField_.get_text();
-    std::stringstream s;
-    int seed;
+        controller_->startNewGameWithSeedButtonClicked(seed, player_1_type, player_2_type, player_3_type,
+                                                       player_4_type);
 
-    s << seedValueAsText.raw();
-    s >> seed;
+        // Set the button labels to rage
+        player_1_button_.set_label("Rage!");
+        player_2_button_.set_label("Rage!");
+        player_3_button_.set_label("Rage!");
+        player_4_button_.set_label("Rage!");
 
-    controller_->startNewGameButtonWithSeedButtonClicked(seed, player_1_type, player_2_type, player_3_type, player_4_type);
-
-    // Set the button labels to rage
-    player_1_button_.set_label("Rage!");
-    player_2_button_.set_label("Rage!");
-    player_3_button_.set_label("Rage!");
-    player_4_button_.set_label("Rage!");
-
-    startNewGameButtonWithSeedButton_.set_sensitive(false);
-
-    setActivePlayerOptions();
-
-    endCurrentGameButton_.set_sensitive(true);
+        setActivePlayerOptions();
+    } else {
+        resetCardsInPlay();
+        controller_->restartGameWithSeedButtonClicked(seed);
+    }
 }
 
 void View::endCurrentGameButtonClicked() {
@@ -546,18 +538,7 @@ void View::endCurrentGameButtonClicked() {
     player_3_button_.set_sensitive(true);
     player_4_button_.set_sensitive(true);
 
-    const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
-
-    for(int i = 0; i < 52; ++i) {
-        tableCards_[i]->set(nullCardPixbuf);
-    }
-
-    for (int i = 0; i < 13; ++i) {
-        delete playerHand_[i];
-        playerHand_[i] = new Gtk::Image(nullCardPixbuf);
-        playerHandButton_[i].set_image(*playerHand_[i]);
-        playerHandButton_[i].set_sensitive(false);
-    }
+    resetCardsInPlay();
 }
 
 void View::player_1_buttonClicked() {
@@ -648,5 +629,27 @@ void View::setActivePlayerOptions() {
 
     if(activePlayerNumber == 4) {
         player_4_button_.set_sensitive(true);
+    }
+}
+
+int View::getCurrentSeed() const {
+    // The following is to convert the seed value in the
+    // text field into an integer
+    string seedString = seedField_.get_text();
+    int seed;
+    std::istringstream(seedString) >> seed;
+    return seed;
+}
+
+void View::resetCardsInPlay() {
+    const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
+
+    for(int i = 0; i < 52; ++i) {
+        tableCards_[i]->set(nullCardPixbuf);
+    }
+
+    for (int i = 0; i < 13; ++i) {
+        playerHand_[i]->set(nullCardPixbuf);
+        playerHandButton_[i].set_sensitive(false);
     }
 }

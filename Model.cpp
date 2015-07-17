@@ -263,18 +263,49 @@ void Model::resetPlayers() {
     }
 }
 
+void Model::restartGame(const int seed) {
+    resetGame();
+
+    deck_.shuffle(seed);
+
+    Player* tempPlayer = NULL;
+
+    for (int i = 0; i < 4; ++i) {
+        if (playerTypes_[i] == "Human") {
+            tempPlayer = new Human(deck_, i + 1);
+        } else {
+            tempPlayer = new Computer(deck_, i + 1);
+        }
+
+        if (i == 0) player_1_ = tempPlayer;
+        else if (i == 1) player_2_ = tempPlayer;
+        else if (i == 2) player_3_ = tempPlayer;
+        else player_4_ = tempPlayer;
+
+        if (tempPlayer->findCard(Card(SPADE, SEVEN))) {
+            setActivePlayer(i + 1);
+        }
+    }
+}
+
 void Model::resetGame() {
-    deck_ = Deck();
+    delete player_1_;
+    delete player_2_;
+    delete player_3_;
+    delete player_4_;
 
     player_1_ = NULL;
     player_2_ = NULL;
     player_3_ = NULL;
     player_4_ = NULL;
 
-    tableCards_ = TableCards();
+    deck_ = Deck();
+
+    tableCards_.clearTable();
 
     legalPlays_.clear();
     legalPlays_ = vector<Card>();
+    setLegalPlay(Card(SPADE, SEVEN));
 }
 
 void Model::replaceCurrentHumanWithComputer() {

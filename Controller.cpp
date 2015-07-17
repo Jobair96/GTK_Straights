@@ -104,7 +104,7 @@ void Controller::discard(const Card card) {
     model_->updateActivePlayer();
 }
 
-void Controller::startNewGameButtonWithSeedButtonClicked(
+void Controller::startNewGameWithSeedButtonClicked(
         const int seed,
         string player_1_type,
         string player_2_type,
@@ -131,6 +131,10 @@ void Controller::startNewGameButtonWithSeedButtonClicked(
         }
     }
 
+}
+
+void Controller::restartGameWithSeedButtonClicked(const int seed) {
+    model_->restartGame(seed);
 }
 
 void Controller::playerRageButtonClicked(const int playerNumber) {
