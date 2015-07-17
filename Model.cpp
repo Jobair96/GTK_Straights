@@ -221,7 +221,10 @@ void Model::resetLegalPlays() {
 }
 
 bool Model::isEndOfGame() const {
-    if (player_1_->score() >= 80 || player_2_->score() >= 80 || player_3_->score() >= 80 || player_4_->score() >= 80) {
+    if (player_1_->score() + player_1_->scoreGain() >= 80
+        || player_2_->score() + player_2_->scoreGain() >= 80
+        || player_3_->score() + player_3_->scoreGain() >= 80
+        || player_4_->score() + player_4_->scoreGain() >= 80) {
         return true;
     }
     return false;

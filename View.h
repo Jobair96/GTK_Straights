@@ -62,7 +62,7 @@ private:
     // Member widgets for top panel
     Gtk::Button endCurrentGameButton_;
     Gtk::Entry seedField_; // This is the text area for the seed value to be entered
-    Gtk::Button startNewGameButtonWithSeedButton_;
+    Gtk::Button startGameWithSeedButton_;
 
     // This horizontal panel contains the options for the four players
     Gtk::HBox playerPanel_;
@@ -126,10 +126,9 @@ private:
     Gtk::Frame playerHandFrame_; // Create a nice framed border for the box
 
     /******************************Dialog********************************************/
-    Gtk::Dialog roundEndDialog_; //Dialog for round end
+    Gtk::Dialog popupDialog_; //Dialog for round end
 
-    Gtk::Label roundEndSummary_; //Dialog round end summary
-    Gtk::Button roundEndOKButton_; //OK Button for round end
+    Gtk::Label popupText_; //Dialog round end summary
 
     /**************************End Dialog********************************************/
 
@@ -152,7 +151,9 @@ private:
 
     /************************Helper Functions************************/
     int getCurrentSeed() const;
-    void resetCardsInPlay();
+    void resetCardsInPlayView();
+
+    void showPopupDialog(std::string, std::string); //changes text and title values of popup dialog and runs it
 }; // View
 
 #endif //VIEW_H

@@ -8,12 +8,12 @@
 using namespace std;
 
 View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
-tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
+tableCardsBox_(), startGameWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
  player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(),
 player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
 player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSummary_(""), roundEndOKButton_("OK")
+playerHandFrame_("Your hand"), popupDialog_(""), popupText_("")
 
 {
 
@@ -23,7 +23,7 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
 
 
     // Add the top panel widgets to topPanel_
-    topPanel_.add(startNewGameButtonWithSeedButton_);
+    topPanel_.add(startGameWithSeedButton_);
 
     // set default value for seed
     seedField_.set_text("0");
@@ -117,7 +117,7 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
     add(mainPanel_);
 
     // Associate button "clicked" events with local onButtonClicked() method defined below.
-    startNewGameButtonWithSeedButton_.signal_clicked().connect(
+    startGameWithSeedButton_.signal_clicked().connect(
             sigc::mem_fun(*this, &View::startGameButtonWithSeedButtonClicked));
     endCurrentGameButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::endCurrentGameButtonClicked));
 
@@ -132,8 +132,8 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
 
     }
 
-    roundEndDialog_.get_vbox()->add(roundEndSummary_);
-    roundEndDialog_.get_vbox()->add(roundEndOKButton_);
+    popupDialog_.get_vbox()->add(popupText_);
+    popupDialog_.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -277,6 +277,7 @@ void View::update() {
         for(int i = hand.size(); i < 13; ++i) {
             const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
             playerHand_[i]->set(nullCardPixbuf);
+            playerHandButton_[i].set_sensitive(false);
         }
     }
 
@@ -301,9 +302,23 @@ void View::update() {
 
     ostringstream convert;   // stream used for the conversion
 
-    // Check if end of round
-    if(controller_->isEndOfRound()) {
+    // Check if end of game
+    if(model_->isEndOfGame()) {
+        for (int i = 1; i < 5; ++i) {
+            model_->updateScore(i);
+        }
+
+        vector<int> winners = model_->getWinners();
+
+        for (int i = 0; i < winners.size(); ++i) {
+            convert << "Player " << winners.at(i) << " wins!" << endl;
+        }
+
+        endCurrentGameButtonClicked();
+    } else if(model_->allHandsEmpty()) {
         cout << "End of round" << endl;
+
+        ostringstream scoreStream;
 
         for (int i = 1; i < 5; ++i) {
             convert << "Player " << i << "'s discards:";
@@ -320,62 +335,46 @@ void View::update() {
             convert << "Player " << i << "'s score: " << model_->getScore(i) << " + " << model_->getScoreGain(i);
             model_->updateScore(i);
             convert << " = " << model_->getScore(i) << endl;
+
+            scoreStream.str("");
+            scoreStream << model_->getScore(i);
+
+            if (i == 1) player_1_score_.set_label(scoreStream.str());
+            else if (i == 2) player_2_score_.set_label(scoreStream.str());
+            else if (i == 3) player_3_score_.set_label(scoreStream.str());
+            else player_4_score_.set_label(scoreStream.str());
         }
 
-        roundEndSummary_.set_text(convert.str());
+        showPopupDialog("Round End", convert.str());
 
-        roundEndDialog_.show_all();
-        roundEndDialog_.run();
+        model_->shuffleDeck(getCurrentSeed());
+
+        beginRound();
 
         cout << "Round has ended" << endl;
-
     }
 
-    if(controller_->isEndOfGame()) {
-        // Show dialog box showing end of game
-        Gtk::Dialog endOfRoundDialog("Game has ended.", true);
-    }
-
-    //Update player scores and discards
+    //Update player discards
     int playerNumber = model_->activePlayer()->playerNumber();
-    int scoreAsInt = model_->getScore(model_->activePlayer()->playerNumber());
-    int discardsAsInt = model_->activePlayer()->discards().size();
-
-    string scoreAsString;          // string which will contain the result
-    string discardsAsString;
 
     convert.str("");
 
-    convert << scoreAsInt;      // insert the textual representation of 'Number' in the characters in the stream
-    scoreAsString = convert.str();
-
-    convert.str("");
-
-    convert << discardsAsInt;
-    discardsAsString = convert.str();
-
-    convert.str("");
-
+    convert << model_->activePlayer()->discards().size();;
+    string discardsAsString = convert.str();
 
     if(playerNumber == 1) {
-        player_1_score_.set_label("Score: " + scoreAsString);
         player_1_discards_.set_label("Discards: " + discardsAsString);
     } else if(playerNumber == 2) {
-        player_2_score_.set_label("Score: " + scoreAsString);
         player_2_discards_.set_label("Discards: " + discardsAsString);
     } else if(playerNumber == 3) {
-        player_3_score_.set_label("Score: " + scoreAsString);
         player_3_discards_.set_label("Discards: " + discardsAsString);
     } else if(playerNumber == 4) {
-        player_4_score_.set_label("Score: " + scoreAsString);
         player_4_discards_.set_label("Discards: " + discardsAsString);
     }
 
     setActivePlayerOptions();
 
     View::toggleIllegalPlays();
-
-
 }
 
 /* void View::runGame(int seed) {
@@ -482,10 +481,19 @@ void View::update() {
 }*/
 
 void View::beginRound() {
-    string message = "A new round begins. It's player ";
+    controller_->clearTable();
+    controller_->resetPlay();
+    resetCardsInPlayView();
+
     int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
-    cout << message << playerNumber << "'s turn to play." << endl;
     controller_->setFirstPlayer(playerNumber);
+
+    ostringstream convert;
+
+    convert.str("");
+    convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
+
+    showPopupDialog("New Round", convert.str());
 }
 
 void View::refreshGame(int seed) {
@@ -520,9 +528,17 @@ void View::startGameButtonWithSeedButtonClicked() {
 
         setActivePlayerOptions();
     } else {
-        resetCardsInPlay();
+        resetCardsInPlayView();
         controller_->restartGameWithSeedButtonClicked(seed);
     }
+
+    int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
+    ostringstream convert;
+
+    convert.str("");
+    convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
+
+    showPopupDialog("New Round", convert.str());
 }
 
 void View::endCurrentGameButtonClicked() {
@@ -538,7 +554,7 @@ void View::endCurrentGameButtonClicked() {
     player_3_button_.set_sensitive(true);
     player_4_button_.set_sensitive(true);
 
-    resetCardsInPlay();
+    resetCardsInPlayView();
 }
 
 void View::player_1_buttonClicked() {
@@ -641,7 +657,7 @@ int View::getCurrentSeed() const {
     return seed;
 }
 
-void View::resetCardsInPlay() {
+void View::resetCardsInPlayView() {
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
 
     for(int i = 0; i < 52; ++i) {
@@ -649,7 +665,16 @@ void View::resetCardsInPlay() {
     }
 
     for (int i = 0; i < 13; ++i) {
-        playerHand_[i]->set(nullCardPixbuf);
         playerHandButton_[i].set_sensitive(false);
+        playerHand_[i]->set(nullCardPixbuf);
     }
+}
+
+void View::showPopupDialog(string title, string text) {
+    popupDialog_.set_title(title);
+    popupText_.set_text(text);
+
+    popupDialog_.show_all();
+    popupDialog_.run();
+    popupDialog_.hide();
 }
