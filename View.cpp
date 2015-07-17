@@ -100,6 +100,7 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
     for (int i = 0; i < 13; ++i) {
         playerHand_[i] = new Gtk::Image(nullCardPixbuf);
         playerHandButton_[i].set_image( *playerHand_[i]);
+        playerHandButton_[i].set_sensitive(false);
         cardBox_.add( playerHandButton_[i] );
     } // for
 
@@ -132,6 +133,9 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
 
     roundEndDialog_.get_vbox()->add(roundEndSummary_);
     roundEndDialog_.get_vbox()->add(roundEndOKButton_);
+
+    // Disable end game button because game has not begun yet
+    endCurrentGameButton_.set_sensitive(false);
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -301,6 +305,7 @@ void View::update() {
 
     // Check if end of round
     if(controller_->isEndOfRound()) {
+        cout << "End of round" << endl;
 
         for (int i = 1; i < 5; ++i) {
             convert << "Player " << i << "'s discards:";
@@ -323,6 +328,7 @@ void View::update() {
 
         roundEndDialog_.show_all();
         roundEndDialog_.run();
+
         cout << "Round has ended" << endl;
 
     }
@@ -523,6 +529,8 @@ void View::startNewGameButtonWithSeedButtonClicked() {
     startNewGameButtonWithSeedButton_.set_sensitive(false);
 
     setActivePlayerOptions();
+
+    endCurrentGameButton_.set_sensitive(true);
 }
 
 void View::endCurrentGameButtonClicked() {
@@ -551,6 +559,7 @@ void View::endCurrentGameButtonClicked() {
     }
 
     startNewGameButtonWithSeedButton_.set_sensitive(true);
+    endCurrentGameButton_.set_sensitive(false);
 }
 
 void View::player_1_buttonClicked() {
