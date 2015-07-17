@@ -211,7 +211,7 @@ void Model::updateLegalPlays(Card card) {
         legalPlays_.push_back(Card(card.getSuit(), (Rank) (card.getRank() + 1)));
     }
 
-    notify();
+    //notify();
 }
 
 void Model::resetLegalPlays() {
@@ -230,7 +230,7 @@ bool Model::isEndOfGame() const {
 void Model::addCardToTable(const Card card) {
     tableCards_.addCard(card);
 
-    notify();
+    //notify();
 }
 
 void Model::updateActivePlayer() {
@@ -278,13 +278,13 @@ void Model::replaceCurrentHumanWithComputer() {
 void Model::removeCardFromActivePlayer(Card card) {
     Model::activePlayer()->removeCard(card);
 
-    notify();
+    //notify();
 
 }
 
 void Model::discardFromActivePlayer(Card card) {
     Model::activePlayer()->discard(card);
 
-    notify();
+    //notify();
 
 }
