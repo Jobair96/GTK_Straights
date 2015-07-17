@@ -100,6 +100,7 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
     for (int i = 0; i < 13; ++i) {
         playerHand_[i] = new Gtk::Image(nullCardPixbuf);
         playerHandButton_[i].set_image( *playerHand_[i]);
+        playerHandButton_[i].set_sensitive(false);
         cardBox_.add( playerHandButton_[i] );
     } // for
 
