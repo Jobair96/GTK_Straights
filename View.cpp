@@ -13,7 +13,7 @@ tableCardsBox_(), startNewGameButtonWithSeedButton_("Start new game with seed: "
 player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
 player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-playerHandFrame_("Your hand")
+playerHandFrame_("Your hand"), roundEndDialog_("Round End"), roundEndOKButton_("OK")
 
 {
 
@@ -44,7 +44,7 @@ playerHandFrame_("Your hand")
     }
 
     for(int i = 13; i < 26; ++i) {
-        tableDaimondCards_.add(*tableCards_[i]);
+        tableDiamondCards_.add(*tableCards_[i]);
     }
 
     for(int i = 26; i < 39; ++i) {
@@ -56,7 +56,7 @@ playerHandFrame_("Your hand")
     }
 
     tableCardsBox_.pack_start(tableClubCards_, true, true, 10);
-    tableCardsBox_.pack_start(tableDaimondCards_, true, true, 10);
+    tableCardsBox_.pack_start(tableDiamondCards_, true, true, 10);
     tableCardsBox_.pack_start(tableHeartCards_, true, true, 10);
     tableCardsBox_.pack_start(tableSpadeCards_, true, true, 10);
 
@@ -129,6 +129,9 @@ playerHandFrame_("Your hand")
         playerHandButton_[i].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::playerHandButtonClicked), i));
 
     }
+
+    roundEndDialog_.get_vbox()->add(roundEndSummary_);
+    roundEndDialog_.get_vbox()->add(roundEndOKButton_);
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -316,7 +319,7 @@ void View::update() {
     convert << discardsAsInt;
     discardsAsString = convert.str();
 
-
+    convert.str("");
 
 
     if(playerNumber == 1) {
@@ -339,8 +342,25 @@ void View::update() {
 
     // Check if end of round
     if(controller_->isEndOfRound()) {
-        // Show dialog box showing end of round
-        Gtk::Dialog endOfRoundDialog("Round has ended.", true);
+
+        for (int i = 1; i < 5; ++i) {
+            convert << "Player " << i << "'s discards:";
+            vector<Card> discards = controller_->getDiscards(i);
+            if (discards.size() > 0) convert << " ";
+            for (int j = 0; j < discards.size(); ++j) {
+                convert << discards.at(j);
+
+                if (j < discards.size() - 1) {
+                    convert << " ";
+                }
+            }
+            convert << endl;
+            convert << "Player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
+            controller_->updateScore(i);
+            convert << " = " << controller_->getScore(i) << endl;
+        }
+
+        roundEndSummary_.set_text(convert.str());
 
         cout << "Round has ended" << endl;
 

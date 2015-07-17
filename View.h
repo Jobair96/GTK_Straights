@@ -105,7 +105,7 @@ private:
     // has an array of 52 cards as there are 52 cards in total.
     Gtk::VBox tableCardsBox_;
 
-    Gtk::HBox tableDaimondCards_;
+    Gtk::HBox tableDiamondCards_;
     Gtk::HBox tableHeartCards_;
     Gtk::HBox tableClubCards_;
     Gtk::HBox tableSpadeCards_;
@@ -123,7 +123,15 @@ private:
     // Member widgets for the player hand panel (which is the last panel)
     Gtk::Image *playerHand_[13]; // Images to display
     Gtk::Button playerHandButton_[13]; // Buttons for each card in the hand
-    Gtk::Frame playerHandFrame_; // Create a niced framed border for the box
+    Gtk::Frame playerHandFrame_; // Create a nice framed border for the box
+
+    /******************************Dialog********************************************/
+    Gtk::Dialog roundEndDialog_; //Dialog for round end
+
+    Gtk::Label roundEndSummary_; //Dialog round end summary
+    Gtk::Button roundEndOKButton_; //OK Button for round end
+
+    /**************************End Dialog********************************************/
 
     // Signal handlers
     void startNewGameButtonWithSeedButtonClicked();
