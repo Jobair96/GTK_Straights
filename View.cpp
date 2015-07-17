@@ -134,9 +134,6 @@ playerHandFrame_("Your hand"), roundEndDialog_("Round End", true), roundEndSumma
     roundEndDialog_.get_vbox()->add(roundEndSummary_);
     roundEndDialog_.get_vbox()->add(roundEndOKButton_);
 
-    // Disable end game button because game has not begun yet
-    endCurrentGameButton_.set_sensitive(false);
-
     // The final step is to display the buttons (they display themselves)
     show_all();
 
@@ -526,18 +523,14 @@ void View::startNewGameButtonWithSeedButtonClicked() {
     player_3_button_.set_label("Rage!");
     player_4_button_.set_label("Rage!");
 
-    startNewGameButtonWithSeedButton_.set_sensitive(false);
-
     setActivePlayerOptions();
 
-    endCurrentGameButton_.set_sensitive(true);
 }
 
 void View::endCurrentGameButtonClicked() {
     controller_->endCurrentGameButtonClicked();
 
     startNewGameButtonWithSeedButton_.set_sensitive(true);
-    endCurrentGameButton_.set_sensitive(false);
 }
 
 void View::player_1_buttonClicked() {
