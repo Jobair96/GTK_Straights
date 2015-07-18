@@ -13,7 +13,7 @@ tableCardsBox_(), startGameWithSeedButton_("Start new game with seed: "), player
 player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
 player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIcon_("img/info_icon.png") /*TODO - fix image*/, historyScrolledWindow_(),
+playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIcon_("img/info_icon.png"), historyScrolledWindow_(),
                                                    historyTitleBox_(), historyTextViewBox_(), historyTitleLabel_("Play History"), historyTextView_(), historyTextBuffer_(
                 historyTextView_.get_buffer())
 

@@ -4,10 +4,13 @@
 
 using namespace std;
 
+// Initializes the deck properly and then initializes player pointers to null, and sets the first legal play of the game to the
+// spade of seven
 Model::Model() : deck_(), player_1_(nullptr), player_2_(nullptr), player_3_(nullptr), player_4_(nullptr) {
     Model::setLegalPlay(Card(SPADE, SEVEN));
 }
 
+// Deletes the players appropriately
 Model::~Model() {
     if(nullptr != player_1_) {
         delete player_1_;
@@ -31,6 +34,8 @@ Model::~Model() {
 
 }
 
+// Sets the player accordingly. Called in the beginning of games and when
+// players need to be replaced
 void Model::setPlayer(string playerType, int playerNumber) {
     playerTypes_[playerNumber - 1] = playerType;
 
@@ -71,7 +76,7 @@ string Model::currentPlayMessage() const {
     return currentPlayMessage_;
 }
 
-void Model::updateCurrentPlayMessage(string play, const Card card) {
+void Model::updateCurrentPlayMessage(const string play, const Card card) {
     ostringstream convert;
     convert << "Player " << activePlayer()->playerNumber() << " " << play << " " << card << "." << endl;
     currentPlayMessage_ = rageQuitMessage_ + convert.str();
@@ -94,6 +99,7 @@ Player* Model::getPlayerWithCard(const Card card) const {
     } else if(player_4_->findCard(card)) {
         return player_4_;
     }
+
     return nullptr;
 }
 
@@ -108,6 +114,9 @@ void Model::setActivePlayer(const int playerNumber) {
         activePlayer_ = player_4_;
     }
 
+    // Since we have changed who the active player is
+    // if the active player is a human, then we
+    // must notify to show the hand
     if(isActiveHumanPlayer()) {
         notify();
     }
@@ -117,6 +126,8 @@ Player* Model::activePlayer() const {
     return activePlayer_;
 }
 
+// Returns the player whose turn it was
+// before the current active player
 Player* Model::getPreviousPlayer() const {
     if (activePlayer_ == player_1_) {
         return player_4_;
@@ -175,7 +186,7 @@ Card Model::getFirstLegalPlay() const {
     return result;
 }
 
-vector<Card> Model::getDiscards(int playerNumber) const {
+vector<Card> Model::getDiscards(const int playerNumber) const {
     return getPlayer(playerNumber)->discards();
 }
 
@@ -237,7 +248,7 @@ bool Model::hasLegalPlay() const {
     return result;
 }
 
-void Model::updateLegalPlays(Card card) {
+void Model::updateLegalPlays(const Card card) {
     if (card == Card(SPADE, SEVEN)) {
         setLegalPlay(Card(DIAMOND,SEVEN));
         setLegalPlay(Card(HEART,SEVEN));
@@ -262,25 +273,29 @@ void Model::resetLegalPlays() {
 }
 
 bool Model::isEndOfGame() const {
+    // If all the players are null i.e they do not exist,
+    // then the game has not even started or it has ended.
+    // Either way, this is considered as end of game
     if(!player_1_ && !player_2_ && !player_3_ && !player_4_) {
         return true;
     }
 
+    // Otherwise, if all players hands are empty and
+    // someone's score is above 80, then the game has ended
     if (allHandsEmpty() &&
-            (player_1_->score() + player_1_->scoreGain() >= 80
+        (  player_1_->score() + player_1_->scoreGain() >= 80
         || player_2_->score() + player_2_->scoreGain() >= 80
         || player_3_->score() + player_3_->scoreGain() >= 80
         || player_4_->score() + player_4_->scoreGain() >= 80)) {
         return true;
     }
 
+    // Otherwise, game has not ended
     return false;
 }
 
 void Model::addCardToTable(const Card card) {
     tableCards_.addCard(card);
-
-    //notify();
 }
 
 void Model::updateActivePlayer() {
@@ -296,6 +311,7 @@ void Model::updateActivePlayer() {
         activePlayer_ = player_1_;
     }
 
+    // Since the active player has now been updated, we must notify
     notify();
 }
 
@@ -314,6 +330,9 @@ void Model::resetPlayers() {
     }
 }
 
+// This restarts the current game with the specified seed.
+// It is different from resetGame(), which resets the players
+// and cards as brand new
 void Model::restartGame(const int seed) {
     deck_.shuffle(seed);
 
@@ -371,6 +390,8 @@ void Model::resetGame() {
 
 }
 
+// Replaces a player that just ragequit with a computer
+// which then plays like a computer
 void Model::replaceCurrentHumanWithComputer() {
     int playerNumber = getActivePlayerNumber();
 
@@ -385,18 +406,13 @@ void Model::replaceCurrentHumanWithComputer() {
 
 void Model::removeCardFromActivePlayer(Card card) {
     Model::activePlayer()->removeCard(card);
-
-    //notify();
-
 }
 
 void Model::discardFromActivePlayer(Card card) {
     Model::activePlayer()->discard(card);
-
-    //notify();
-
 }
 
+// The following deletes the specified player properly
 void Model::deletePlayer(const int playerNumber) {
     if(playerNumber == 1) {
         if(nullptr != player_1_) {
