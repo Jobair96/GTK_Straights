@@ -262,7 +262,6 @@ void View::update() {
 
     // The following is for if the current player is a computer
 
-
     // 1) If player is human, then show hand, otherwise do nothing
     if(model_->isActiveHumanPlayer()) {
         vector<Card> hand = model_->activePlayer()->hand();
@@ -301,24 +300,57 @@ void View::update() {
     }
 
     ostringstream convert;   // stream used for the conversion
+    ostringstream scoreStream;
+
+    //Update player discards
+    int playerNumber = model_->getPreviousPlayer()->playerNumber();
+
+    convert.str("");
+
+    convert << model_->getPreviousPlayer()->discards().size();
+    string discardsAsString = convert.str();
+
+    if(playerNumber == 1) {
+        player_1_discards_.set_label("Discards: " + discardsAsString);
+    } else if(playerNumber == 2) {
+        player_2_discards_.set_label("Discards: " + discardsAsString);
+    } else if(playerNumber == 3) {
+        player_3_discards_.set_label("Discards: " + discardsAsString);
+    } else if(playerNumber == 4) {
+        player_4_discards_.set_label("Discards: " + discardsAsString);
+    }
 
     // Check if end of game
     if(model_->isEndOfGame()) {
+
         for (int i = 1; i < 5; ++i) {
             model_->updateScore(i);
+
+            scoreStream.str("");
+            scoreStream << "Score: " << model_->getScore(i);
+
+            if (i == 1) player_1_score_.set_label(scoreStream.str());
+            else if (i == 2) player_2_score_.set_label(scoreStream.str());
+            else if (i == 3) player_3_score_.set_label(scoreStream.str());
+            else player_4_score_.set_label(scoreStream.str());
         }
 
-        vector<int> winners = model_->getWinners();
+       vector<int> winners = model_->getWinners();
+        convert.str("");
 
-        for (int i = 0; i < winners.size(); ++i) {
+       for (int i = 0; i < winners.size(); ++i) {
             convert << "Player " << winners.at(i) << " wins!" << endl;
         }
 
-        endCurrentGameButtonClicked();
-    } else if(model_->allHandsEmpty()) {
-        cout << "End of round" << endl;
+        showPopupDialog("Game Over", convert.str());
 
-        ostringstream scoreStream;
+        endCurrentGameButtonClicked();
+
+        return;
+
+    } else if(model_->allHandsEmpty()) {
+        convert.str("");
+        cout << "End of round" << endl;
 
         for (int i = 1; i < 5; ++i) {
             convert << "Player " << i << "'s discards:";
@@ -337,7 +369,7 @@ void View::update() {
             convert << " = " << model_->getScore(i) << endl;
 
             scoreStream.str("");
-            scoreStream << model_->getScore(i);
+            scoreStream << "Score: " << model_->getScore(i);
 
             if (i == 1) player_1_score_.set_label(scoreStream.str());
             else if (i == 2) player_2_score_.set_label(scoreStream.str());
@@ -347,29 +379,11 @@ void View::update() {
 
         showPopupDialog("Round End", convert.str());
 
-        model_->shuffleDeck(getCurrentSeed());
+        model_->shuffleDeckWithPersistedSeed();
 
         beginRound();
 
         cout << "Round has ended" << endl;
-    }
-
-    //Update player discards
-    int playerNumber = model_->activePlayer()->playerNumber();
-
-    convert.str("");
-
-    convert << model_->activePlayer()->discards().size();;
-    string discardsAsString = convert.str();
-
-    if(playerNumber == 1) {
-        player_1_discards_.set_label("Discards: " + discardsAsString);
-    } else if(playerNumber == 2) {
-        player_2_discards_.set_label("Discards: " + discardsAsString);
-    } else if(playerNumber == 3) {
-        player_3_discards_.set_label("Discards: " + discardsAsString);
-    } else if(playerNumber == 4) {
-        player_4_discards_.set_label("Discards: " + discardsAsString);
     }
 
     setActivePlayerOptions();
@@ -494,6 +508,14 @@ void View::beginRound() {
     convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
 
     showPopupDialog("New Round", convert.str());
+
+    /*while (!model_->isActiveHumanPlayer()){
+        if(model_->hasLegalPlay()) {
+            controller_->completeComputerPlayCard();
+        } else {
+            controller_->completeComputerDiscard();
+        }
+    }*/
 }
 
 void View::refreshGame(int seed) {
@@ -527,18 +549,52 @@ void View::startGameButtonWithSeedButtonClicked() {
         player_4_button_.set_label("Rage!");
 
         setActivePlayerOptions();
+
+        int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
+        ostringstream convert;
+
+        convert.str("");
+        convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
+
+        showPopupDialog("New Round", convert.str());
+
+        while (!model_->isActiveHumanPlayer()){
+            if(!model_->isEndOfGame()) {
+                if (model_->hasLegalPlay()) {
+                    controller_->completeComputerPlayCard();
+                } else {
+                    controller_->completeComputerDiscard();
+                }
+            } else {
+                endCurrentGameButtonClicked();
+                break;
+            }
+        }
     } else {
         resetCardsInPlayView();
         controller_->restartGameWithSeedButtonClicked(seed);
+
+        int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
+        ostringstream convert;
+
+        convert.str("");
+        convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
+
+        showPopupDialog("New Round", convert.str());
+
+        while (!model_->isActiveHumanPlayer()) {
+            if (!model_->isEndOfGame()) {
+                if (model_->hasLegalPlay()) {
+                    controller_->completeComputerPlayCard();
+                } else {
+                    controller_->completeComputerDiscard();
+                }
+            } else {
+                endCurrentGameButtonClicked();
+                break;
+            }
+        }
     }
-
-    int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
-    ostringstream convert;
-
-    convert.str("");
-    convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
-
-    showPopupDialog("New Round", convert.str());
 }
 
 void View::endCurrentGameButtonClicked() {
@@ -553,6 +609,17 @@ void View::endCurrentGameButtonClicked() {
     player_2_button_.set_sensitive(true);
     player_3_button_.set_sensitive(true);
     player_4_button_.set_sensitive(true);
+
+    player_1_score_.set_label("Score: 0");
+    player_1_discards_.set_label("Discards: 0");
+    player_2_score_.set_label("Score: 0");
+    player_2_discards_.set_label("Discards: 0");
+    player_3_score_.set_label("Score: 0");
+    player_3_discards_.set_label("Discards: 0");
+    player_4_score_.set_label("Score: 0");
+    player_4_discards_.set_label("Discards: 0");
+
+    // set player scores and discards back to zero
 
     resetCardsInPlayView();
 }

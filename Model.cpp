@@ -53,8 +53,13 @@ void Model::setPlayer(string playerType, int playerNumber) {
 
 }
 
-void Model::shuffleDeck(int seed) {
+void Model::shuffleDeck(const int seed) {
+    gameSeed_ = seed;
     deck_.shuffle(seed);
+}
+
+void Model::shuffleDeckWithPersistedSeed() {
+    shuffleDeck(gameSeed_);
 }
 
 Player* Model::getPlayerWithCard(const Card card) const {
@@ -81,11 +86,25 @@ void Model::setActivePlayer(const int playerNumber) {
         activePlayer_ = player_4_;
     }
 
-    notify();
+    if(isActiveHumanPlayer()) {
+        notify();
+    }
 }
 
 Player* Model::activePlayer() const {
     return activePlayer_;
+}
+
+Player* Model::getPreviousPlayer() const {
+    if (activePlayer_ == player_1_) {
+        return player_4_;
+    } else if (activePlayer_ == player_2_) {
+        return player_1_;
+    } else if (activePlayer_ == player_3_) {
+        return player_2_;
+    } else {
+        return player_3_;
+    }
 }
 
 int Model::getActivePlayerNumber() const {
@@ -221,12 +240,18 @@ void Model::resetLegalPlays() {
 }
 
 bool Model::isEndOfGame() const {
-    if (player_1_->score() + player_1_->scoreGain() >= 80
-        || player_2_->score() + player_2_->scoreGain() >= 80
-        || player_3_->score() + player_3_->scoreGain() >= 80
-        || player_4_->score() + player_4_->scoreGain() >= 80) {
+    if(!player_1_ && !player_2_ && !player_3_ && !player_4_) {
         return true;
     }
+
+    if (allHandsEmpty() &&
+            (player_1_->score() + player_1_->scoreGain() >= 80
+        || player_2_->score() + player_2_->scoreGain() >= 80
+        || player_3_->score() + player_3_->scoreGain() >= 80
+        || player_4_->score() + player_4_->scoreGain() >= 80)) {
+        return true;
+    }
+
     return false;
 }
 
@@ -237,6 +262,7 @@ void Model::addCardToTable(const Card card) {
 }
 
 void Model::updateActivePlayer() {
+
     Player *currentActivePlayer = activePlayer();
     if(currentActivePlayer == player_1_) {
         activePlayer_ = player_2_;
@@ -267,8 +293,6 @@ void Model::resetPlayers() {
 }
 
 void Model::restartGame(const int seed) {
-    resetGame();
-
     deck_.shuffle(seed);
 
     Player* tempPlayer = NULL;
@@ -297,10 +321,10 @@ void Model::resetGame() {
     delete player_3_;
     delete player_4_;
 
-    player_1_ = NULL;
-    player_2_ = NULL;
-    player_3_ = NULL;
-    player_4_ = NULL;
+    player_1_ = nullptr;
+    player_2_ = nullptr;
+    player_3_ = nullptr;
+    player_4_ = nullptr;
 
     deck_ = Deck();
 
@@ -309,6 +333,7 @@ void Model::resetGame() {
     legalPlays_.clear();
     legalPlays_ = vector<Card>();
     setLegalPlay(Card(SPADE, SEVEN));
+
 }
 
 void Model::replaceCurrentHumanWithComputer() {

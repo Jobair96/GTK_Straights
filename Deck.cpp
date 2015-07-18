@@ -68,8 +68,6 @@ Deck::~Deck() {
 void Deck::shuffle(int seed) {
     static mt19937 rng((long)seed);
 
-    rng.seed(seed);
-
     int n = CARD_COUNT;
 
     while ( n > 1 ) {

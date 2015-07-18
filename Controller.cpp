@@ -122,15 +122,6 @@ void Controller::startNewGameWithSeedButtonClicked(
 
     // Initialize active player to player with seven of spades
     model_->setActivePlayer(model_->getPlayerWithCard(Card(SPADE, SEVEN))->playerNumber());
-
-    while (!model_->isActiveHumanPlayer()){
-        if(model_->hasLegalPlay()) {
-            Controller::completeComputerPlayCard();
-        } else {
-            Controller::completeComputerDiscard();
-        }
-    }
-
 }
 
 void Controller::restartGameWithSeedButtonClicked(const int seed) {
@@ -140,14 +131,17 @@ void Controller::restartGameWithSeedButtonClicked(const int seed) {
 void Controller::playerRageButtonClicked(const int playerNumber) {
     model_->replaceCurrentHumanWithComputer();
 
-    while (!model_->isActiveHumanPlayer()){
-        if(model_->hasLegalPlay()) {
-            Controller::completeComputerPlayCard();
-        } else {
-            Controller::completeComputerDiscard();
+        while (!model_->isActiveHumanPlayer()) {
+            if(!model_->isEndOfGame()) {
+                if (model_->hasLegalPlay()) {
+                    Controller::completeComputerPlayCard();
+                } else {
+                    Controller::completeComputerDiscard();
+                }
+            } else {
+                break;
         }
     }
-
 }
 
 void Controller::endCurrentGameButtonClicked() {
@@ -166,11 +160,15 @@ void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
         Controller::discard(card);
     }
 
-    while (!model_->isActiveHumanPlayer()){
-        if(model_->hasLegalPlay()) {
-            Controller::completeComputerPlayCard();
+    while (!model_->isActiveHumanPlayer()) {
+        if(!model_->isEndOfGame()) {
+            if (model_->hasLegalPlay()) {
+                Controller::completeComputerPlayCard();
+            } else {
+                Controller::completeComputerDiscard();
+            }
         } else {
-            Controller::completeComputerDiscard();
+            break;
         }
     }
 }

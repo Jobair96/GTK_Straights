@@ -31,7 +31,8 @@ public:
     void discardFromActivePlayer(const Card);
 
     void setPlayer(const std::string, const int); // creates a player based on player type (c or h) and player number
-    void shuffleDeck(const int); // shuffles the deck using the specified seed
+    void shuffleDeck(const int); // shuffles the deck using the specified seed, also persists the seed
+    void shuffleDeckWithPersistedSeed(); // shuffles the deck using persisted seed
     void setActivePlayer(const int); // sets the active player to the specified player number
     void setLegalPlay(const Card); // adds a specified card to the list of legal plays
 
@@ -43,6 +44,7 @@ public:
 
     Player* getPlayerWithCard(const Card) const; // returns a player who holds a card
     Player* activePlayer() const; // returns the active player
+    Player* getPreviousPlayer() const; // returns the previous player
     int getActivePlayerNumber() const; // returns the active player's player number
     Card getFirstLegalPlay() const; // returns the first legal play in a computer's hand
     std::vector<Card> getDiscards(int) const; // returns the list of discards based on player number
@@ -71,6 +73,8 @@ private:
     Deck deck_; // shuffled deck of cards
     TableCards tableCards_; // entity containing list of cards on the table
     std::vector<Card> legalPlays_; // list of legal plays
+
+    int gameSeed_ = 0; // stores the seed given at beginning of the game
 
     Player *player_1_; // pointer to player 1
     Player *player_2_; // pointer to player 2
