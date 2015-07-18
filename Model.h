@@ -90,6 +90,8 @@ private:
     int getPlayerNumber(Player*) const; //returns player number by player
 
     void resetAllCards(); //resets to sorted deck, empty table, empty hands, only spade-seven legal
+
+    void deletePlayer(const int);
 };
 
 

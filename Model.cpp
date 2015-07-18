@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Model::Model() : deck_(), player_1_(NULL), player_2_(NULL), player_3_(NULL), player_4_(NULL) {
+Model::Model() : deck_(), player_1_(nullptr), player_2_(nullptr), player_3_(nullptr), player_4_(nullptr) {
     Model::setLegalPlay(Card(SPADE, SEVEN));
 }
 
@@ -42,12 +42,16 @@ void Model::setPlayer(string playerType, int playerNumber) {
     }
 
     if(playerNumber == 1) {
+        deletePlayer(1);
         player_1_ = player;
     } else if(playerNumber == 2) {
+        deletePlayer(2);
         player_2_ = player;
     } else if(playerNumber == 3) {
+        deletePlayer(3);
         player_3_ = player;
     } else if(playerNumber == 4) {
+        deletePlayer(4);
         player_4_ = player;
     }
 
@@ -304,10 +308,22 @@ void Model::restartGame(const int seed) {
             tempPlayer = new Computer(deck_, i + 1);
         }
 
-        if (i == 0) player_1_ = tempPlayer;
-        else if (i == 1) player_2_ = tempPlayer;
-        else if (i == 2) player_3_ = tempPlayer;
-        else player_4_ = tempPlayer;
+        if (i == 0) {
+            deletePlayer(1);
+            player_1_ = tempPlayer;
+        }
+        else if (i == 1) {
+            deletePlayer(2);
+            player_2_ = tempPlayer;
+        }
+        else if (i == 2) {
+            deletePlayer(3);
+            player_3_ = tempPlayer;
+        }
+        else {
+            deletePlayer(4);
+            player_4_ = tempPlayer;
+        }
 
         if (tempPlayer->findCard(Card(SPADE, SEVEN))) {
             setActivePlayer(i + 1);
@@ -363,5 +379,36 @@ void Model::discardFromActivePlayer(Card card) {
     Model::activePlayer()->discard(card);
 
     //notify();
+
+}
+
+void Model::deletePlayer(const int playerNumber) {
+    if(playerNumber == 1) {
+        if(nullptr != player_1_) {
+            delete player_1_;
+            player_1_ = nullptr;
+        }
+    }
+
+    if(playerNumber == 2) {
+        if(nullptr != player_2_) {
+            delete player_2_;
+            player_2_ = nullptr;
+        }
+    }
+
+    if(playerNumber == 3) {
+        if(nullptr != player_3_) {
+            delete player_3_;
+            player_3_ = nullptr;
+        }
+    }
+
+    if(playerNumber == 4) {
+        if(nullptr != player_4_) {
+            delete player_4_;
+            player_4_ = nullptr;
+        }
+    }
 
 }
