@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char * argv[]) {
 
-    Gtk::Main kit(argc, argv); // Initialize gtkmm with the command line arguments, as appropriate.
+    Gtk::Main kit(argc,argv); // Initialize gtkmm with the command line arguments, as appropriate.
 
     Model model; // The model of the game
     Controller controller(&model); // The controller of the game
