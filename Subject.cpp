@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 12/07/15.
-//
-
 #include "Subject.h"
 #include "Observer.h"
 

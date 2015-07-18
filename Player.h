@@ -1,7 +1,6 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include <gtkmm.h>
 #include "Deck.h"
 #include "TableCards.h"
 

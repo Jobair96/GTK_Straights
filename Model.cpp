@@ -1,5 +1,6 @@
 #include "Model.h"
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 

@@ -17,5 +17,5 @@ add_definitions(${GTKMM_CFLAGS_OTHER})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES main.cpp)
-add_executable(Project_1 ${SOURCE_FILES} Card.h Card.cpp Computer.h Computer.cpp Controller.h Controller.cpp Deck.h Deck.cpp Human.h Human.cpp Model.cpp Model.h Model.cpp Player.h Player.cpp View.h View.cpp TableCards.cpp TableCards.h Subject.cpp Subject.h Observer.h TableCardsGUI.h HandGUI.cpp HandGUI.h DeckGUI.cpp DeckGUI.h)
+add_executable(Project_1 ${SOURCE_FILES} Card.h Card.cpp Computer.h Computer.cpp Controller.h Controller.cpp Deck.h Deck.cpp Human.h Human.cpp Model.cpp Model.h Model.cpp Player.h Player.cpp View.h View.cpp TableCards.cpp TableCards.h Subject.cpp Subject.h Observer.h DeckGUI.cpp DeckGUI.h)
 target_link_libraries(${CMAKE_PROJECT_NAME} ${GTKMM_LIBRARIES})

@@ -52,17 +52,18 @@ DeckGUI::DeckGUI()  {
 } // DeckGUI::DeckGUI
 
 DeckGUI::~DeckGUI() {
+
 } // DeckGUI::~DeckGUI
 
 // Returns the image for the specified card.
-Glib::RefPtr<Gdk::Pixbuf> DeckGUI::getCardImage(Rank rank, Suit suit ) {
+Glib::RefPtr<Gdk::Pixbuf> DeckGUI::getCardImage(const Rank rank, const Suit suit ) const {
      int index = ((int) rank) + ((int) suit * 13 );
      return deck[ index ];
 } // DeckGUI::getCardImage
 
 // Returns the image to use for the placeholder.
-Glib::RefPtr<Gdk::Pixbuf> DeckGUI::getNullCardImage() {
-     int size = deck.size();
+Glib::RefPtr<Gdk::Pixbuf> DeckGUI::getNullCardImage() const {
+     unsigned long size = deck.size();
      return deck[ size-1 ];
 } // DeckGUI::getNullCardImage
 

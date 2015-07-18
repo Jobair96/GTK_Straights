@@ -1,7 +1,3 @@
-//
-// Created by jobair_hassan on 12/07/15.
-//
-
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
