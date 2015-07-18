@@ -1,8 +1,8 @@
 #ifndef DECK_H
 #define DECK_H
 
-#include "Card.h"
 #include <vector>
+#include "Card.h"
 
 /* This class represents the deck of cards for the game */
 
@@ -13,7 +13,6 @@ public:
     ~Deck(); // Destructor
 
     void shuffle(const int); // Shuffles the deck using the seed parameter passed in
-    void print() const; // prints the contents of the deck
 
     std::vector<Card> cards() const; // returns cards_
 

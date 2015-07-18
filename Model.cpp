@@ -8,24 +8,24 @@ Model::Model() : deck_(), player_1_(NULL), player_2_(NULL), player_3_(NULL), pla
 }
 
 Model::~Model() {
-    if(NULL != player_1_) {
+    if(nullptr != player_1_) {
         delete player_1_;
-        player_1_ = NULL;
+        player_1_ = nullptr;
     }
 
-    if(NULL != player_2_) {
+    if(nullptr != player_2_) {
         delete player_2_;
-        player_2_ = NULL;
+        player_2_ = nullptr;
     }
 
-    if(NULL != player_3_) {
+    if(nullptr != player_3_) {
         delete player_3_;
-        player_3_ = NULL;
+        player_3_ = nullptr;
     }
 
-    if(NULL != player_4_) {
+    if(nullptr != player_4_) {
         delete player_4_;
-        player_4_ = NULL;
+        player_4_ = nullptr;
     }
 
 }
@@ -33,7 +33,7 @@ Model::~Model() {
 void Model::setPlayer(string playerType, int playerNumber) {
     playerTypes_[playerNumber - 1] = playerType;
 
-    Player *player = NULL;
+    Player *player = nullptr;
 
     if(playerType == "Human") {
         player = new Human(deck_, playerNumber);
@@ -72,7 +72,7 @@ Player* Model::getPlayerWithCard(const Card card) const {
     } else if(player_4_->findCard(card)) {
         return player_4_;
     }
-    return NULL;
+    return nullptr;
 }
 
 void Model::setActivePlayer(const int playerNumber) {
@@ -295,7 +295,7 @@ void Model::resetPlayers() {
 void Model::restartGame(const int seed) {
     deck_.shuffle(seed);
 
-    Player* tempPlayer = NULL;
+    Player* tempPlayer = nullptr;
 
     for (int i = 0; i < 4; ++i) {
         if (playerTypes_[i] == "Human") {
@@ -313,6 +313,10 @@ void Model::restartGame(const int seed) {
             setActivePlayer(i + 1);
         }
     }
+
+    delete tempPlayer;
+    tempPlayer = nullptr;
+
 }
 
 void Model::resetGame() {

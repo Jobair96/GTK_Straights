@@ -1,5 +1,4 @@
 #include "View.h"
-#include "Command.h"
 #include <iostream>
 #include <cstdlib>
 #include <assert.h>
@@ -147,14 +146,14 @@ playerHandFrame_("Your hand"), popupDialog_(""), popupText_("")
 
 View::~View() {
     for(int i = 0; i < 13; ++i) {
-        if(!playerHand_[i]) {
+        if(nullptr != playerHand_[i]) {
             delete playerHand_[i];
             playerHand_[i] = nullptr;
         }
     }
 
     for(int i = 0; i < 52; ++i) {
-        if(!tableCards_[i]) {
+        if(nullptr != tableCards_[i]) {
             delete tableCards_[i];
             tableCards_[i] = nullptr;
         }

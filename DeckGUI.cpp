@@ -1,11 +1,5 @@
-//
-// Created by jobair_hassan on 12/07/15.
-//
-
 #include "DeckGUI.h"
-#include <algorithm>
-#include <iterator>
-#include <string>
+
 using std::string;
 using std::transform;
 
