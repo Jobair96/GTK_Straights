@@ -68,6 +68,7 @@ void Controller::playCard(Card card) {
     model_->activePlayer()->removeCard(card);
     model_->addCardToTable(card);
     model_->updateLegalPlays(card);
+    model_->updateCurrentPlayMessage("plays", card);
     model_->updateActivePlayer();
 }
 
@@ -101,6 +102,7 @@ void Controller::completeComputerDiscard() {
 void Controller::discard(const Card card) {
     model_->removeCardFromActivePlayer(card);
     model_->discardFromActivePlayer(card);
+    model_->updateCurrentPlayMessage("discards", card);
     model_->updateActivePlayer();
 }
 
@@ -128,8 +130,9 @@ void Controller::restartGameWithSeedButtonClicked(const int seed) {
     model_->restartGame(seed);
 }
 
-void Controller::playerRageButtonClicked(const int playerNumber) {
+void Controller::playerRageButtonClicked() {
     model_->replaceCurrentHumanWithComputer();
+    model_->updateRageQuitMessage();
 
         while (!model_->isActiveHumanPlayer()) {
             if(!model_->isEndOfGame()) {
@@ -152,10 +155,11 @@ void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
     Card card = model_->activePlayer()->hand().at(indexOfCardPlayed);
 
     if(model_->hasLegalPlay()) {
-        model_->addCardToTable(card);
-        model_->updateLegalPlays(card);
-        model_->removeCardFromActivePlayer(card);
-        model_->updateActivePlayer();
+        playCard(card);
+//        model_->addCardToTable(card);
+//        model_->updateLegalPlays(card);
+//        model_->removeCardFromActivePlayer(card);
+//        model_->updateActivePlayer();
     } else {
         Controller::discard(card);
     }

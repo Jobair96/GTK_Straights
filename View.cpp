@@ -6,19 +6,22 @@
 
 using namespace std;
 
-View::View(Model *model, Controller *controller) : model_(model), controller_(controller), mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
+View::View(Model *model, Controller *controller) : model_(model), controller_(controller), gameBox_(), historyPanel_(),
+                                                   mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
 tableCardsBox_(), startGameWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
- player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(),
+ player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(), vertCardBox_(), handBox_(), moveBox_(),
 player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
 player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
 player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-playerHandFrame_("Your hand"), popupDialog_(""), popupText_("")
+playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIcon_("img/info_icon.png") /*TODO - fix image*/, historyScrolledWindow_(),
+                                                   historyTitleBox_(), historyTextViewBox_(), historyTitleLabel_("Play History"), historyTextView_(), historyTextBuffer_(
+                historyTextView_.get_buffer())
 
 {
 
     // Sets some properties of the window
     set_title("Straights UI");
-    set_border_width(20);
+    set_border_width(30);
 
 
     // Add the top panel widgets to topPanel_
@@ -100,8 +103,21 @@ playerHandFrame_("Your hand"), popupDialog_(""), popupText_("")
         playerHand_[i] = new Gtk::Image(nullCardPixbuf);
         playerHandButton_[i].set_image( *playerHand_[i]);
         playerHandButton_[i].set_sensitive(false);
-        cardBox_.add( playerHandButton_[i] );
+        handBox_.add( playerHandButton_[i] );
     } // for
+
+    // Starts the game turned off as it doesn't do anything
+    discardButton_.set_sensitive(false);
+
+    // Add discard button to the bottom box
+    moveBox_.add(discardButton_);
+
+    // Add both hand and move boxes into the vertical card box
+    vertCardBox_.add(handBox_);
+    vertCardBox_.add(moveBox_);
+
+    // move vertical card box into horizontal card box
+    cardBox_.add(vertCardBox_);
 
     // Add the horizontal box for laying out the images to the frame.
     playerHandFrame_.add(cardBox_);
@@ -112,8 +128,33 @@ playerHandFrame_("Your hand"), popupDialog_(""), popupText_("")
     mainPanel_.add(playerPanel_);
     mainPanel_.add(playerHandFrame_);
 
-    // Add the main vertical panel to the window
-    add(mainPanel_);
+    // Bolds the history title label
+    historyTitleLabel_.set_markup("<b>Play History</b>");
+
+    // Configure history textview
+    historyTextView_.set_editable(false);
+    historyTextView_.set_cursor_visible(false);
+    historyTextView_.set_size_request(150);
+    historyTextView_.set_wrap_mode(Gtk::WRAP_WORD);
+
+    // Add history textview to scrolled window, set scrolled window horizontal and vertical scroll policies
+    historyScrolledWindow_.add(historyTextView_);
+    historyScrolledWindow_.set_policy(Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
+
+    // Add the history widgets to their HBoxes
+    historyTitleBox_.add(historyTitleLabel_);
+    historyTextViewBox_.add(historyScrolledWindow_);
+
+    // Add the history title box and text view box to the history panel
+    historyPanel_.pack_start(historyTitleBox_, false, false, 5);
+    historyPanel_.pack_start(historyTextViewBox_);
+
+    // Add the main vertical panel and the history panel to the game HBox
+    gameBox_.pack_start(mainPanel_, true, true, 10);
+    gameBox_.pack_start(historyPanel_, true, true, 10);
+
+    // Add the game box to the window
+    add(gameBox_);
 
     // Associate button "clicked" events with local onButtonClicked() method defined below.
     startGameWithSeedButton_.signal_clicked().connect(
@@ -131,8 +172,9 @@ playerHandFrame_("Your hand"), popupDialog_(""), popupText_("")
 
     }
 
-    popupDialog_.get_vbox()->add(popupText_);
-    popupDialog_.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
+    discardButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::discardButtonClicked));
+
+    popupDialog_.set_image(popupIcon_);
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -261,6 +303,8 @@ void View::update() {
 
     // The following is for if the current player is a computer
 
+    historyTextBuffer_->insert(historyTextBuffer_->end(), model_->currentPlayMessage());
+
     // 1) If player is human, then show hand, otherwise do nothing
     if(model_->isActiveHumanPlayer()) {
         vector<Card> hand = model_->activePlayer()->hand();
@@ -341,6 +385,7 @@ void View::update() {
             convert << "Player " << winners.at(i) << " wins!" << endl;
         }
 
+        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
         showPopupDialog("Game Over", convert.str());
 
         endCurrentGameButtonClicked();
@@ -382,7 +427,7 @@ void View::update() {
 
         beginRound();
 
-        cout << "Round has ended" << endl;
+        //cout << "Round has ended" << endl;
     }
 
     setActivePlayerOptions();
@@ -506,6 +551,8 @@ void View::beginRound() {
     convert.str("");
     convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
 
+    historyTextBuffer_->insert(historyTextBuffer_->end(), "\n" + convert.str());
+
     showPopupDialog("New Round", convert.str());
 
     /*while (!model_->isActiveHumanPlayer()){
@@ -548,50 +595,33 @@ void View::startGameButtonWithSeedButtonClicked() {
         player_4_button_.set_label("Rage!");
 
         setActivePlayerOptions();
-
-        int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
-        ostringstream convert;
-
-        convert.str("");
-        convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
-
-        showPopupDialog("New Round", convert.str());
-
-        while (!model_->isActiveHumanPlayer()){
-            if(!model_->isEndOfGame()) {
-                if (model_->hasLegalPlay()) {
-                    controller_->completeComputerPlayCard();
-                } else {
-                    controller_->completeComputerDiscard();
-                }
-            } else {
-                endCurrentGameButtonClicked();
-                break;
-            }
-        }
     } else {
         resetCardsInPlayView();
         controller_->restartGameWithSeedButtonClicked(seed);
+    }
 
-        int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
-        ostringstream convert;
+    int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
+    ostringstream convert;
 
-        convert.str("");
-        convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
+    convert.str("");
+    convert << "A new game begins. It's player " << playerNumber << "'s turn to play." << endl;
 
-        showPopupDialog("New Round", convert.str());
+    historyTextBuffer_->erase(historyTextBuffer_->begin(), historyTextBuffer_->end());
 
-        while (!model_->isActiveHumanPlayer()) {
-            if (!model_->isEndOfGame()) {
-                if (model_->hasLegalPlay()) {
-                    controller_->completeComputerPlayCard();
-                } else {
-                    controller_->completeComputerDiscard();
-                }
+    historyTextBuffer_->insert(historyTextBuffer_->end(), convert.str());
+
+    showPopupDialog("New Game", convert.str());
+
+    while (!model_->isActiveHumanPlayer()) {
+        if (!model_->isEndOfGame()) {
+            if (model_->hasLegalPlay()) {
+                controller_->completeComputerPlayCard();
             } else {
-                endCurrentGameButtonClicked();
-                break;
+                controller_->completeComputerDiscard();
             }
+        } else {
+            endCurrentGameButtonClicked();
+            break;
         }
     }
 }
@@ -625,7 +655,7 @@ void View::endCurrentGameButtonClicked() {
 
 void View::player_1_buttonClicked() {
     if(player_1_button_.get_label() == "Rage!") {
-        controller_->playerRageButtonClicked(1);
+        controller_->playerRageButtonClicked();
     } else if(player_1_button_.get_label() == "Human") {
         player_1_button_.set_label("Computer");
     } else if(player_1_button_.get_label() == "Computer") {
@@ -635,7 +665,7 @@ void View::player_1_buttonClicked() {
 
 void View::player_2_buttonClicked() {
     if(player_2_button_.get_label() == "Rage!") {
-        controller_->playerRageButtonClicked(2);
+        controller_->playerRageButtonClicked();
     } else if(player_2_button_.get_label() == "Human") {
         player_2_button_.set_label("Computer");
     } else if(player_2_button_.get_label() == "Computer") {
@@ -645,7 +675,7 @@ void View::player_2_buttonClicked() {
 
 void View::player_3_buttonClicked() {
     if(player_3_button_.get_label() == "Rage!") {
-        controller_->playerRageButtonClicked(3);
+        controller_->playerRageButtonClicked();
     } else if(player_3_button_.get_label() == "Human") {
         player_3_button_.set_label("Computer");
     } else if(player_3_button_.get_label() == "Computer") {
@@ -655,7 +685,7 @@ void View::player_3_buttonClicked() {
 
 void View::player_4_buttonClicked() {
     if(player_4_button_.get_label() == "Rage!") {
-        controller_->playerRageButtonClicked(4);
+        controller_->playerRageButtonClicked();
     } else if(player_4_button_.get_label() == "Human") {
         player_4_button_.set_label("Computer");
     } else if(player_4_button_.get_label() == "Computer") {
@@ -667,6 +697,14 @@ void View::playerHandButtonClicked(int indexOfCardChosen) {
     controller_->playerHandButtonClicked(indexOfCardChosen);
 }
 
+void View::discardButtonClicked() {
+    discardButton_.set_sensitive(false);
+
+    for(int i = 0; i < controller_->getActiveHand().size(); ++i) {
+        playerHandButton_[i].set_sensitive(true);
+    }
+}
+
 void View::toggleIllegalPlays() {
     vector<Card> hand = model_->activePlayer()->hand();
 
@@ -676,9 +714,7 @@ void View::toggleIllegalPlays() {
     }
 
     if(!model_->hasLegalPlay()) {
-        for(int i = 0; i < hand.size(); ++i) {
-            playerHandButton_[i].set_sensitive(true);
-        }
+        discardButton_.set_sensitive(true);
     } else {
         for (int i = 0; i < hand.size(); ++i) {
             if (controller_->isLegalPlay(hand.at(i))) {
@@ -738,7 +774,7 @@ void View::resetCardsInPlayView() {
 
 void View::showPopupDialog(string title, string text) {
     popupDialog_.set_title(title);
-    popupText_.set_text(text);
+    popupDialog_.set_secondary_text(text, false);
 
     popupDialog_.show_all();
     popupDialog_.run();

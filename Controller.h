@@ -12,7 +12,7 @@ public:
     void startNewGameWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string);
     void restartGameWithSeedButtonClicked(const int);
     void endCurrentGameButtonClicked();
-    void playerRageButtonClicked(const int);
+    void playerRageButtonClicked();
     void playerHandButtonClicked(const int);
 
 

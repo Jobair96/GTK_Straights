@@ -42,6 +42,10 @@ public:
 
     void addCardToTable(const Card); // places a card from a player's hand to the table
 
+    std::string currentPlayMessage() const; // returns the previous play
+    void updateCurrentPlayMessage(std::string, const Card); // updates the previous play message
+    void updateRageQuitMessage(); // updates the rage quit message
+
     Player* getPlayerWithCard(const Card) const; // returns a player who holds a card
     Player* activePlayer() const; // returns the active player
     Player* getPreviousPlayer() const; // returns the previous player
@@ -73,6 +77,9 @@ private:
     Deck deck_; // shuffled deck of cards
     TableCards tableCards_; // entity containing list of cards on the table
     std::vector<Card> legalPlays_; // list of legal plays
+
+    std::string currentPlayMessage_; // stores the summary of the previous play
+    std::string rageQuitMessage_; // stores the summary of a rage quitter, is empty if there is no rage quit this turn
 
     int gameSeed_ = 0; // stores the seed given at beginning of the game
 

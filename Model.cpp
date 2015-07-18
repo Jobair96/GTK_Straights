@@ -66,6 +66,23 @@ void Model::shuffleDeckWithPersistedSeed() {
     shuffleDeck(gameSeed_);
 }
 
+string Model::currentPlayMessage() const {
+    return currentPlayMessage_;
+}
+
+void Model::updateCurrentPlayMessage(string play, const Card card) {
+    ostringstream convert;
+    convert << "Player " << activePlayer()->playerNumber() << " " << play << " " << card << "." << endl;
+    currentPlayMessage_ = rageQuitMessage_ + convert.str();
+    rageQuitMessage_ = "";
+}
+
+void Model::updateRageQuitMessage() {
+    ostringstream convert;
+    convert << "Player " << activePlayer()->playerNumber() << " ragequits." << endl;
+    rageQuitMessage_ = convert.str();
+}
+
 Player* Model::getPlayerWithCard(const Card card) const {
     if(player_1_->findCard(card)) {
         return player_1_;
@@ -330,7 +347,6 @@ void Model::restartGame(const int seed) {
         }
     }
 
-    delete tempPlayer;
     tempPlayer = nullptr;
 
 }
@@ -345,8 +361,6 @@ void Model::resetGame() {
     player_2_ = nullptr;
     player_3_ = nullptr;
     player_4_ = nullptr;
-
-    deck_ = Deck();
 
     tableCards_.clearTable();
 

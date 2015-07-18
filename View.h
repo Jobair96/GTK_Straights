@@ -49,9 +49,15 @@ private:
     // Card Images
     DeckGUI deck;
 
-    // Main window will be divided into four horizontal panels that will be
-    // stacked on top of each other in a vertical panel
+    // Main window will be divided into two vertical panels; the main panel and the history panel
+    Gtk::HBox gameBox_;
+
+    // The main panel will be divided into four horizontal panels that will be
+    // stacked on top of each other
     Gtk::VBox mainPanel_;
+
+    // The history panel will contain the history textview
+    Gtk::VBox historyPanel_;
 
     // The four Horizontal panels are below:
 
@@ -117,20 +123,36 @@ private:
 
     // This horizontal panel is the final panel to be included as
     // the final panel in the main vertical box panel. It aligns the widgets
-    // which are the current cards in the players hands
+    // which are the current cards in the players hands, as well as the
+    // move notification widgets
     Gtk::HBox cardBox_;
+
+    // The last horizontal panel needs to be further divided into two horizontal
+    // panels contained within the same frame
+    Gtk::VBox vertCardBox_;
+    Gtk::HBox handBox_;
+    Gtk::HBox moveBox_;
 
     // Member widgets for the player hand panel (which is the last panel)
     Gtk::Image *playerHand_[13]; // Images to display
     Gtk::Button playerHandButton_[13]; // Buttons for each card in the hand
     Gtk::Frame playerHandFrame_; // Create a nice framed border for the box
 
+    Gtk::Button discardButton_; // Button to turn on the ability to discard
+
     /******************************Dialog********************************************/
-    Gtk::Dialog popupDialog_; //Dialog for round end
-
-    Gtk::Label popupText_; //Dialog round end summary
-
+    Gtk::MessageDialog popupDialog_; //Dialog for round end
+    Gtk::Image popupIcon_; //Dialog popup icon
     /**************************End Dialog********************************************/
+
+    /****************************History********************************************/
+    Gtk::ScrolledWindow historyScrolledWindow_; //Scrolled Window which allows for scrolling
+    Gtk::HBox historyTitleBox_; // HBox containing title label
+    Gtk::HBox historyTextViewBox_; // Hbox containing textview + scrolled window
+    Gtk::Label historyTitleLabel_; // title label
+    Gtk::TextView historyTextView_; //TextView displaying each player's play
+    Glib::RefPtr<Gtk::TextBuffer> historyTextBuffer_; //text buffer for historyView
+    /**************************End History******************************************/
 
     // Signal handlers
     void startGameButtonWithSeedButtonClicked();
@@ -142,6 +164,8 @@ private:
     void player_4_buttonClicked();
 
     void playerHandButtonClicked(int);
+
+    void discardButtonClicked();
 
     void toggleIllegalPlays();
 
