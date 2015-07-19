@@ -260,7 +260,6 @@ void View::update() {
     }
 
     ostringstream convert;   // stream used for the conversion
-    ostringstream scoreStream; // stream used for keeping track of the score
 
     //Update player discards
     int playerNumber = model_->getPreviousPlayer()->playerNumber();
@@ -306,17 +305,17 @@ void View::beginRound() {
     controller_->resetPlay();
     resetCardsInPlayView();
 
-    int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
+    int playerNumber = controller_->getPlayerWithSevenSpade();
     controller_->setFirstPlayer(playerNumber);
 
     ostringstream convert;
 
     convert.str("");
-    convert << "A new round begins. It's player " << playerNumber << "'s turn to play." << endl;
+    convert << "It's player " << playerNumber << "'s turn to play.";
 
     historyTextBuffer_->insert(historyTextBuffer_->end(), "\n" + convert.str());
 
-    showPopupDialog("New Round", "", convert.str()); //TODO
+    showPopupDialog("New Round", "A New Round Begins!", convert.str());
 }
 
 // When starting a new game, there are several things we must do.
@@ -349,17 +348,17 @@ void View::startGameButtonWithSeedButtonClicked() {
         controller_->restartGameWithSeedButtonClicked(seed);
     }
 
-    int playerNumber = controller_->getPlayerWithSevenSpade(Card(SPADE, SEVEN));
+    int playerNumber = controller_->getPlayerWithSevenSpade();
     ostringstream convert;
 
     convert.str("");
-    convert << "A new game begins. It's player " << playerNumber << "'s turn to play." << endl;
+    convert << "It's player " << playerNumber << "'s turn to play.";
 
     historyTextBuffer_->erase(historyTextBuffer_->begin(), historyTextBuffer_->end());
 
     historyTextBuffer_->insert(historyTextBuffer_->end(), convert.str());
 
-    showPopupDialog("New Game", "", convert.str()); //TODO
+    showPopupDialog("New Game", "<big><b>A New Game Begins!</b></big>", convert.str());
 
     controller_->completeComputerTurns();
 
@@ -564,16 +563,14 @@ void View::reportEndRound() {
         }
         convert << endl;
         convert << "Player " << i << "'s score:       " << model_->getScore(i) << " + " << model_->getScoreGain(i);
-        model_->updateScore(i);
-        convert << " = " << model_->getScore(i);
+        convert << " = " << (model_->getScore(i) + model_->getScoreGain(i));
 
         if (i != 4) {
             convert << endl << endl;
         }
 
-        model_->updateScore(i);
         scoreStream.str("");
-        scoreStream << "Score: " << model_->getScore(i);
+        scoreStream << "Score: " << (model_->getScore(i) + model_->getScoreGain(i));
 
         if (i == 1) player_1_score_.set_label(scoreStream.str());
         else if (i == 2) player_2_score_.set_label(scoreStream.str());
@@ -582,18 +579,24 @@ void View::reportEndRound() {
     }
 
     if (model_->isEndOfGame()) {
+        ostringstream history;
+
         title = "Game Over";
 
         vector<int> winners = model_->getWinners();
         convert << endl << endl;
 
         for (int i = 0; i < winners.size(); ++i) {
+            history << "Player " << winners.at(i) << " wins!";
             convert << "<b>Player " << winners.at(i) << " wins!</b>";
 
-            if (i != winners.size() - 1) convert << endl;
+            if (i != winners.size() - 1) {
+                history << endl;
+                convert << endl;
+            }
         }
 
-        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
+        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over!\n" + history.str());
     }
 
     showPopupDialog(title, "<big><b>Report:</b></big>", convert.str());

@@ -39,15 +39,13 @@ public:
 
     void playCard(const Card); // puts the card into play on the table
 
-    void updateScore(int); // updates the score of the specified player by number
-
     void completeComputerPlayCard(); // completes the computer turn if they play a card
     void completeComputerDiscard(); // completes the computer turn if they discard a card
     void completeComputerTurns(); // automatically runs through the computer turns until game over
 
     void discard(const Card); // the active player discards the specified card
 
-    int getPlayerWithSevenSpade(const Card) const; // returns the player with seven of spades
+    int getPlayerWithSevenSpade() const; // returns the player with seven of spades
 
     void clearTable(); // clears the table cards
     void resetPlay(); // resets the players' hands and discards, as well as the legal plays

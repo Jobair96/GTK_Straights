@@ -78,6 +78,4 @@ void Player::reset() {
 
     hand_.clear();
     hand_ = vector<Card>();
-
-    scoreGain_ = 0;
 }

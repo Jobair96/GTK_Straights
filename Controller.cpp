@@ -15,8 +15,8 @@ void Controller::setActivePlayer(const int playerNumber) {
     model_->setActivePlayer(playerNumber);
 }
 
-int Controller::getPlayerWithSevenSpade(const Card card) const {
-    return model_->getPlayerWithCard(card)->playerNumber();
+int Controller::getPlayerWithSevenSpade() const {
+    return model_->getPlayerWithCard(Card(SPADE, SEVEN))->playerNumber();
 }
 
 Player* Controller::activePlayer() const {
@@ -88,10 +88,6 @@ void Controller::rageQuit() {
 void Controller::completeComputerPlayCard() {
     Card card = model_->getFirstLegalPlay();
     playCard(card);
-}
-
-void Controller::updateScore(int playerNumber) {
-    model_->updateScore(playerNumber);
 }
 
 void Controller::completeComputerDiscard() {

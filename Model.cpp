@@ -315,8 +315,16 @@ void Model::updateActivePlayer() {
         activePlayer_ = player_1_;
     }
 
+    bool endRound = allHandsEmpty();
     // Since the active player has now been updated, we must notify
     notify();
+
+    // Update scores at end of round, but player pointers are deallocated at end of game
+    if (endRound && !isEndOfGame()) {
+        for (int i = 1; i < 5; ++i) {
+            updateScore(i);
+        }
+    }
 }
 
 void Model::updateScore(int playerNumber) {
