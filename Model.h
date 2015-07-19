@@ -60,7 +60,7 @@ public:
     std::vector<Card> getDiscards(const int) const; // returns the list of discards based on player number
     int getScore(int) const; // returns the game score based on player number
     int getScoreGain(int) const; // returns the round score based on player number
-    std::vector<int> getWinners() const; // finds the winner of the game
+    std::vector<int> getWinners(); // finds the winner of the game
 
     bool allHandsEmpty() const; // checks if every player has no cards left
     bool hasLegalPlay() const; // checks if a player has legal plays available

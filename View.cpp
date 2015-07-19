@@ -365,9 +365,9 @@ void View::startGameButtonWithSeedButtonClicked() {
     // reset the discard button
     discardButton_.set_sensitive(false);
 
-    //if(model_->isActiveHumanPlayer() && !model_->isEndOfGame()) {
+    if(model_->isActiveHumanPlayer() && !model_->isEndOfGame()) {
         toggleIllegalPlays();
-    //}
+    }
 }
 
 void View::endCurrentGameButtonClicked() {

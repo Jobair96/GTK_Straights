@@ -213,7 +213,12 @@ Player *Model::getPlayer(int playerNumber) const {
     }
 }
 
-vector<int> Model::getWinners() const {
+vector<int> Model::getWinners()  {
+    // Update everyone's scores
+    for(int i = 1; i < 5; ++i) {
+        updateScore(i);
+    }
+
     vector<int> winners;
     int lowestScore = getScore(1);
 
