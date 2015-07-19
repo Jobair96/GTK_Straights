@@ -232,9 +232,10 @@ void View::update() {
             // Make sure player cannot click on those
             playerHandButton_[i].set_sensitive(false);
         }
+
+        toggleIllegalPlays();
     }
 
-    toggleIllegalPlays();
 
    // 2) Now get relevent table card data from model
     vector<Card> tableCards = model_->tableCards().tableCards();
@@ -345,7 +346,6 @@ void View::update() {
 
     setActivePlayerOptions();
 
-   // toggleIllegalPlays();
 }
 
 void View::beginRound() {
@@ -423,6 +423,7 @@ void View::startGameButtonWithSeedButtonClicked() {
 
     // reset the discard button
     discardButton_.set_sensitive(false);
+    toggleIllegalPlays();
 }
 
 void View::endCurrentGameButtonClicked() {
@@ -512,6 +513,9 @@ void View::discardButtonClicked() {
 }
 
 void View::toggleIllegalPlays() {
+    // turn off discard button by default
+    discardButton_.set_sensitive(false);
+
     vector<Card> hand = model_->activePlayer()->hand();
 
     // Reset toggle sensitivity

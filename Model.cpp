@@ -6,7 +6,7 @@ using namespace std;
 
 // Initializes the deck properly and then initializes player pointers to null, and sets the first legal play of the game to the
 // spade of seven
-Model::Model() : deck_(), player_1_(nullptr), player_2_(nullptr), player_3_(nullptr), player_4_(nullptr) {
+Model::Model() : deck_(0), player_1_(nullptr), player_2_(nullptr), player_3_(nullptr), player_4_(nullptr) {
     Model::setLegalPlay(Card(SPADE, SEVEN));
 }
 

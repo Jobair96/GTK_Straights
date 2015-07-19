@@ -1,9 +1,8 @@
 #include "Deck.h"
-#include <random>
 
 using namespace std;
 
-Deck::Deck() {
+Deck::Deck(const int seed) : rng(seed){
     cards_ = {
             Card(CLUB, ACE),
             Card(CLUB, TWO),
@@ -65,7 +64,7 @@ Deck::~Deck() {
 }
 
 void Deck::shuffle(int seed) {
-    mt19937 rng((long)seed);
+        rng.seed(seed);
 
     int n = CARD_COUNT;
 
