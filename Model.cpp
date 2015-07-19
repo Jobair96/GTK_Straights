@@ -347,7 +347,11 @@ void Model::resetPlayers() {
 void Model::restartGame(const int seed) {
     resetGame();
 
-    deck_.shuffle(seed);
+    if(seed != gameSeed_) {
+        shuffleDeckWithNewSeed(seed);
+    } else {
+        deck_.shuffle(seed);
+    }
 
     Player* tempPlayer = nullptr;
 
