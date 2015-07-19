@@ -124,6 +124,7 @@ void Controller::startNewGameWithSeedButtonClicked(
 
     // Initialize active player to player with seven of spades
     model_->setActivePlayer(model_->getPlayerWithCard(Card(SPADE, SEVEN))->playerNumber());
+
 }
 
 void Controller::restartGameWithSeedButtonClicked(const int seed) {

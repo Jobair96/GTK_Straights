@@ -1,12 +1,10 @@
 /*
- * View class. Is responsible for buttons (that user clicks) and for displaying the rest of the gui elements.
+ * View class. Is responsible for buttons (that user clicks) and for handling everything related to the gui,
+ * as dictated by the MVC design pattern
  */
 
 #ifndef VIEW_H
 #define VIEW_H
-
-//3543
-//2323
 
 #include <gtkmm.h>
 #include <gtkmm/label.h>
@@ -23,21 +21,6 @@ public:
     ~View(); // destructor
 
     virtual void update(); // Observer Pattern: concrete update() method
-
-
-    /* Old code here */
-
-    void beginRound(); // initializes a new round
-
-    void printPlayer() const; // prints a player information
-    void printTableCards() const; // prints a tables information
-    void printWinner() const; // prints a winning line
-
-    void runGame(const int); // runs the game logic
-
-    void refreshGame(int); // refreshes the game state for a new round
-
-    /* Old code ends */
 
 private:
     // Observer Pattern: to access Model accessors without having to downcast object
@@ -74,12 +57,21 @@ private:
     Gtk::HBox playerPanel_;
 
     // Member widgets for the playerPanel
+
+    // We will display all the buttons in a frame
+    // where we can also display the player's score and discards
+    Gtk::Frame player_1_frame_;
+    Gtk::Frame player_2_frame_;
+    Gtk::Frame player_3_frame_;
+    Gtk::Frame player_4_frame_;
+
+    // These are buttons for each of the players. They will be added to the above frames
     Gtk::Button player_1_button_;
     Gtk::Button player_2_button_;
     Gtk::Button player_3_button_;
     Gtk::Button player_4_button_;
 
-    // The following are labels for displaying player scores
+    // The following are labels for displaying player scores. They will also be added to the above frames
     Gtk::Label player_1_score_;
     Gtk::Label player_1_discards_;
 
@@ -89,26 +81,22 @@ private:
     Gtk::Label player_3_score_;
     Gtk::Label player_3_discards_;
 
-
     Gtk::Label player_4_score_;
     Gtk::Label player_4_discards_;
 
+    // Finally, all the above widgets will be added to VBoxes to stack them vertically on top of each other
     Gtk::VBox player_1_box_;
     Gtk::VBox player_2_box_;
     Gtk::VBox player_3_box_;
     Gtk::VBox player_4_box_;
 
-    // We will display all the buttons in a frame
-    // where we can also display the player's score and discards
-    Gtk::Frame player_1_frame_;
-    Gtk::Frame player_2_frame_;
-    Gtk::Frame player_3_frame_;
-    Gtk::Frame player_4_frame_;
+    // That's all for the player panel
 
     // Now, we have the horizontal panel to display the cards that have been played
-    // on the table. This itself is a vertical panel that has four horizontal panel inside
-    // of it. There are four horizontal panels because there are four suits. Each panel
-    // has an array of 52 cards as there are 52 cards in total.
+    // on the table. This itself is a vertical panel that has four horizontal panels inside
+    // of it. There are four horizontal panels because there are four suits. Each horizontal panel
+    // holds 13 cards as there are 13 cards in a suit, and four of these panels make up all
+    // the cards we can have on the table in total.
     Gtk::VBox tableCardsBox_;
 
     Gtk::HBox tableDiamondCards_;
@@ -121,17 +109,21 @@ private:
     Gtk::Image * tableCards_[52];
 
 
-    // This horizontal panel is the final panel to be included as
-    // the final panel in the main vertical box panel. It aligns the widgets
-    // which are the current cards in the players hands, as well as the
-    // move notification widgets
-    Gtk::HBox cardBox_;
+    // This horizontal panel shows the player's hands and the discard button.
+    // Therefore, it will be subdivided into two more horizontal panels
+    Gtk::HBox finalBox_;
 
     // The last horizontal panel needs to be further divided into two horizontal
     // panels contained within the same frame
-    Gtk::VBox vertCardBox_;
-    Gtk::HBox handBox_;
-    Gtk::HBox moveBox_;
+
+    // This one contains the cards in the player's hand
+    Gtk::HBox playerHandBox_;
+
+    // The following is for stacking the playerhand box and the discard button box
+    Gtk::VBox finalVertCardBox_;
+
+    // The following is to hold the discard button
+    Gtk::HBox discardBox_;
 
     // Member widgets for the player hand panel (which is the last panel)
     Gtk::Image *playerHand_[13]; // Images to display
@@ -140,11 +132,16 @@ private:
 
     Gtk::Button discardButton_; // Button to turn on the ability to discard
 
+    // That is it for the main four horizontal panels
+
+    // The following is the popup dialog we use for the entire game
+    // It gets loaded with different messages depending on the situation
     /******************************Dialog********************************************/
     Gtk::MessageDialog popupDialog_; //Dialog for round end
     Gtk::Image popupIcon_; //Dialog popup icon
     /**************************End Dialog********************************************/
 
+    // The following are the widgets for the history of plays
     /****************************History********************************************/
     Gtk::ScrolledWindow historyScrolledWindow_; //Scrolled Window which allows for scrolling
     Gtk::HBox historyTitleBox_; // HBox containing title label
@@ -167,17 +164,18 @@ private:
 
     void discardButtonClicked();
 
-    void toggleIllegalPlays();
-
-    void setActivePlayerOptions();
-
     // end signal handlers
 
     /************************Helper Functions************************/
-    int getCurrentSeed() const;
+    int getCurrentSeedAsInt() const;
     void resetCardsInPlayView();
 
+    void toggleIllegalPlays(); // Makes sure the illegal plays on the player's hands cannot be clicked
+    void setActivePlayerOptions(); // Sets the player options depending on which player is active and their type (Computer/Human)
+
     void showPopupDialog(std::string, std::string); //changes text and title values of popup dialog and runs it
+
+    void beginRound(); // initializes a new round
 }; // View
 
 #endif //VIEW_H

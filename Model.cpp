@@ -367,6 +367,8 @@ void Model::restartGame(const int seed) {
         }
     }
 
+    tableCards_.clearTable();
+
     tempPlayer = nullptr;
 
 }

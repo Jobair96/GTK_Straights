@@ -1,28 +1,27 @@
-#include "View.h"
 #include <iostream>
-#include <cstdlib>
-#include <assert.h>
+#include "View.h"
 #include "Controller.h"
 
 using namespace std;
 
-View::View(Model *model, Controller *controller) : model_(model), controller_(controller), gameBox_(), historyPanel_(),
-                                                   mainPanel_(), topPanel_(), playerPanel_(), endCurrentGameButton_("End current game"),
-tableCardsBox_(), startGameWithSeedButton_("Start new game with seed: "), player_1_button_("Human"),
- player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"), cardBox_(), vertCardBox_(), handBox_(), moveBox_(),
-player_1_score_("Score: 0"), player_2_score_("Score: 0"),player_3_score_("Score: 0"), player_4_score_("Score: 0"),
-player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"),player_4_discards_("Discards: 0"),
-player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIcon_("img/info_icon.png"), historyScrolledWindow_(),
-                                                   historyTitleBox_(), historyTextViewBox_(), historyTitleLabel_("Play History"), historyTextView_(), historyTextBuffer_(
-                historyTextView_.get_buffer())
+// The constructor initializes the required gui elements properly
+View::View(Model *model, Controller *controller) :
+        model_(model), controller_(controller),
+        gameBox_(), historyPanel_(), mainPanel_(), topPanel_(), playerPanel_(), tableCardsBox_(),
+        finalBox_(), finalVertCardBox_(), playerHandBox_(), discardBox_(), historyScrolledWindow_(),
+        endCurrentGameButton_("End current game"), startGameWithSeedButton_("Start new game with seed: "),
+        player_1_button_("Human"), player_2_button_("Human"), player_3_button_("Human"), player_4_button_("Human"),
+        player_1_score_("Score: 0"), player_2_score_("Score: 0"), player_3_score_("Score: 0"), player_4_score_("Score: 0"),
+        player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"), player_4_discards_("Discards: 0"),
+        player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
+        playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIcon_("img/info_icon.png"),
+        historyTitleBox_(), historyTextViewBox_(), historyTitleLabel_("Play History"), historyTextView_(), historyTextBuffer_(historyTextView_.get_buffer())
 
 {
 
     // Sets some properties of the window
     set_title("Straights UI");
     set_border_width(30);
-
 
     // Add the top panel widgets to topPanel_
     topPanel_.add(startGameWithSeedButton_);
@@ -33,7 +32,7 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
     topPanel_.add(seedField_);
     topPanel_.add(endCurrentGameButton_);
 
-    // Used for initializtion of table and hand cards
+    // Used for initialization of table and hand cards
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
 
     // The following is all the code required to initialize the table cards
@@ -57,6 +56,7 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
         tableSpadeCards_.add(*tableCards_[i]);
     }
 
+    // Add all the suits to the main tableCardsBox to display the entire table
     tableCardsBox_.pack_start(tableClubCards_, true, true, 10);
     tableCardsBox_.pack_start(tableDiamondCards_, true, true, 10);
     tableCardsBox_.pack_start(tableHeartCards_, true, true, 10);
@@ -89,7 +89,7 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
     player_3_frame_.add(player_3_box_);
     player_4_frame_.add(player_4_box_);
 
-    // Add the player panel widgets to playerPanel_
+    // Add the above frames to playerPanel_
     playerPanel_.add(player_1_frame_);
     playerPanel_.add(player_2_frame_);
     playerPanel_.add(player_3_frame_);
@@ -103,24 +103,24 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
         playerHand_[i] = new Gtk::Image(nullCardPixbuf);
         playerHandButton_[i].set_image( *playerHand_[i]);
         playerHandButton_[i].set_sensitive(false);
-        handBox_.add( playerHandButton_[i] );
+        playerHandBox_.add( playerHandButton_[i] );
     } // for
 
     // Starts the game turned off as it doesn't do anything
     discardButton_.set_sensitive(false);
 
     // Add discard button to the bottom box
-    moveBox_.add(discardButton_);
+    discardBox_.add(discardButton_);
 
     // Add both hand and move boxes into the vertical card box
-    vertCardBox_.add(handBox_);
-    vertCardBox_.add(moveBox_);
+    finalVertCardBox_.add(playerHandBox_);
+    finalVertCardBox_.add(discardBox_);
 
     // move vertical card box into horizontal card box
-    cardBox_.add(vertCardBox_);
+    finalBox_.add(finalVertCardBox_);
 
     // Add the horizontal box for laying out the images to the frame.
-    playerHandFrame_.add(cardBox_);
+    playerHandFrame_.add(finalBox_);
 
     // Add all the horizontal panels to the main vertical panel
     mainPanel_.add(topPanel_);
@@ -157,8 +157,7 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
     add(gameBox_);
 
     // Associate button "clicked" events with local onButtonClicked() method defined below.
-    startGameWithSeedButton_.signal_clicked().connect(
-            sigc::mem_fun(*this, &View::startGameButtonWithSeedButtonClicked));
+    startGameWithSeedButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::startGameButtonWithSeedButtonClicked));
     endCurrentGameButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::endCurrentGameButtonClicked));
 
     player_1_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_1_buttonClicked));
@@ -166,14 +165,15 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
     player_3_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_3_buttonClicked));
     player_4_button_.signal_clicked().connect(sigc::mem_fun(*this, &View::player_4_buttonClicked));
 
-    // For all the cards in the player's hand, connect it to a signal
+    // For all the cards in the player's hand, connect it with the proper playerHandButtonClicked() method
     for(int i = 0; i < 13; ++i) {
         playerHandButton_[i].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(*this, &View::playerHandButtonClicked), i));
-
     }
 
+    // Connect the signal for the discard button
     discardButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::discardButtonClicked));
 
+    // Show the first popup dialog for game start
     popupDialog_.set_image(popupIcon_);
 
     // The final step is to display the buttons (they display themselves)
@@ -181,11 +181,9 @@ playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popu
 
     // Now we register view as observer of model
     model_->subscribe(this);
-
-    //runGame(seed);
-
 } // View::View
 
+// Delete all the images the we allocated in the destructor
 View::~View() {
     for(int i = 0; i < 13; ++i) {
         if(nullptr != playerHand_[i]) {
@@ -202,123 +200,36 @@ View::~View() {
     }
 }
 
-void View::printPlayer() const {
-    vector<Card> hand = controller_->getActiveHand();
 
-    cout << "Your hand: ";
-
-    for(int i = 0; i < hand.size(); ++i) {
-        cout << hand.at(i);
-        if(i != hand.size() - 1) {
-            cout << " ";
-        }
-    }
-
-    cout << endl;
-
-    cout << "Legal plays:";
-    for(int i = 0; i < hand.size(); ++i) {
-        if (controller_->isLegalPlay(hand.at(i))) {
-            cout << " ";
-            cout << hand.at(i);
-        }
-    }
-
-    cout << endl;
-}
-
-void View::printTableCards() const {
-
-    cout << "Cards on the table:" << endl;
-
-    cout << "Clubs:";
-
-    vector<Card> tableCards = model_->tableCards().tableCards();
-
-    vector<Card> temp;
-
-    // Clubs
-    for(int i = 0; i < tableCards.size(); ++i) {
-        if(tableCards[i].getSuit() == CLUB) {
-            cout << " ";
-            cout << Card::ranks[tableCards[i].getRank()];
-        }
-    }
-
-    cout << endl;
-
-    cout << "Diamonds:";
-
-    // Diamonds
-    for(int i = 0; i < tableCards.size(); ++i) {
-        if(tableCards[i].getSuit() == DIAMOND) {
-            cout << " ";
-            cout << Card::ranks[tableCards[i].getRank()];
-        }
-    }
-
-    cout << endl;
-
-    cout << "Hearts:";
-
-    // Hearts
-    for(int i = 0; i < tableCards.size(); ++i) {
-        if(tableCards[i].getSuit() == HEART) {
-            cout << " ";
-            cout << Card::ranks[tableCards[i].getRank()];
-        }
-    }
-
-    cout << endl;
-
-    cout << "Spades:";
-
-    // Spades
-    for(int i = 0; i < tableCards.size(); ++i) {
-        if(tableCards[i].getSuit() == SPADE) {
-            cout << " ";
-            cout << Card::ranks[tableCards[i].getRank()];
-        }
-    }
-
-    cout << endl;
-}
-
-void View::printWinner() const {
-    vector<int> winners = controller_->getWinners();
-
-    for (int i = 0; i < winners.size(); ++i) {
-        cout << "Player " << winners.at(i) << " wins!" << endl;
-    }
-}
-
+// Things to update:
+// 1) Active player - if player is human, then show hand and wait for input
+//    otherwise, let model play computer's turn, then notify again
+// 2) Table cards - get relevent table card data from model, and update
+//    table cards on gui
+// 3) Update the player's points at the end of a round
+// 4) Also update every player's discard number
 void View::update() {
-    // Things to update:
-    // 1) Active player - if player is human, then show hand and wait for input
-    //    otherwise, let model play computer's turn, then notify again
-    // 2) Table cards - get relevent table card data from model, and update
-    //    table cards on gui
-    // 3) Also Update every player's points
-    // 4) Also update every player's discard number
 
-    // The following is for if the current player is a computer
-
+    // We insert the correct element into the history text
     historyTextBuffer_->insert(historyTextBuffer_->end(), model_->currentPlayMessage());
 
     // 1) If player is human, then show hand, otherwise do nothing
     if(model_->isActiveHumanPlayer()) {
         vector<Card> hand = model_->activePlayer()->hand();
 
+        // display player's hand
         for (int i = 0; i < hand.size(); ++i) {
             const Glib::RefPtr<Gdk::Pixbuf> cardPixbuf = deck.getCardImage(hand[i].getRank(), hand[i].getSuit());
-
             playerHand_[i]->set(cardPixbuf);
-
         }
 
-        for(int i = hand.size(); i < 13; ++i) {
+        // Now if the player's hand has less than 13 cards, fill the
+        // rest of their hand with images of the null card
+        for(unsigned long i = hand.size(); i < 13; ++i) {
             const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
             playerHand_[i]->set(nullCardPixbuf);
+
+            // Make sure player cannot click on those
             playerHandButton_[i].set_sensitive(false);
         }
     }
@@ -338,12 +249,13 @@ void View::update() {
             // Get index of this card
             int index = (int) rank + ((int) suit * 13);
 
+            // set the proper image for it on the table
             tableCards_[index]->set(cardPixbuf);
         }
     }
 
     ostringstream convert;   // stream used for the conversion
-    ostringstream scoreStream;
+    ostringstream scoreStream; // stream used for keeping track of the score
 
     //Update player discards
     int playerNumber = model_->getPreviousPlayer()->playerNumber();
@@ -435,109 +347,6 @@ void View::update() {
     View::toggleIllegalPlays();
 }
 
-/* void View::runGame(int seed) {
-
-    controller_->initializeDeck(seed);
-
-    invitePlayers();
-
-    roundStart:
-    beginRound();
-
-    Command command;
-
-    while(!controller_->isEndOfRound() && !cin.eof()) {
-
-        if (controller_->isActiveHumanPlayer()) {
-
-            printTableCards();
-            printPlayer();
-
-            input:
-            cout << ">";
-            cin >> command;
-
-            switch (command.type) {
-                case PLAY: {
-                    if (controller_->isLegalPlay(command.card)) {
-                        cout << "Player " << controller_->activePlayer()->playerNumber() << " plays " << command.card << "." << endl;
-                        controller_->playCard(command.card);
-                    } else {
-                        cout << "This is not a legal play." << endl;
-                        goto input;
-                    }
-
-                    break;
-                }
-
-                case DISCARD: {
-                    if(!model_->hasLegalPlay()) {
-                        cout << "Player " << model_->activePlayer()->playerNumber() << " discards " << command.card << "." << endl;
-                        controller_->discard(command.card);
-                    } else {
-                        cout << "You have a legal play. You may not discard." << endl;
-                        goto input;
-                    }
-                    break;
-                }
-
-                case RAGEQUIT: {
-                    controller_->rageQuit();
-                    cout << "Player " << model_->activePlayer()->playerNumber() << " ragequits. A computer will now take over." << endl;
-                    break;
-                }
-
-                case DECK: {
-                    model_->deck().print();
-                    goto input;
-                }
-
-                case QUIT: {
-                    return;
-                }
-
-                default: {
-
-                }
-            }
-        }
-
-        if (!controller_->isActiveHumanPlayer()){
-            if(model_->hasLegalPlay()) {
-                cout << "Player " << model_->activePlayer()->playerNumber() << " plays " << model_->getFirstLegalPlay() << "." << endl;
-                controller_->completeComputerPlayCard();
-            } else {
-                cout << "Player " << model_->activePlayer()->playerNumber() << " discards " << model_->activePlayer()->hand().at(0) << "." << endl;
-                controller_->completeComputerDiscard();
-            }
-        }
-    }
-
-    for (int i = 1; i < 5; ++i) {
-        cout << "Player " << i << "'s discards:";
-        vector<Card> discards = controller_->getDiscards(i);
-        if (discards.size() > 0) cout << " ";
-        for (int j = 0; j < discards.size(); ++j) {
-            cout << discards.at(j);
-
-            if (j < discards.size() - 1) {
-                cout << " ";
-            }
-        }
-        cout << endl;
-        cout << "Player " << i << "'s score: " << controller_->getScore(i) << " + " << controller_->getScoreGain(i);
-        controller_->updateScore(i);
-        cout << " = " << controller_->getScore(i) << endl;
-    }
-
-    if (!controller_->isEndOfGame()) {
-        refreshGame(seed);
-        goto roundStart;
-    }
-
-    printWinner();
-}*/
-
 void View::beginRound() {
     controller_->clearTable();
     controller_->resetPlay();
@@ -564,17 +373,11 @@ void View::beginRound() {
     }*/
 }
 
-void View::refreshGame(int seed) {
-    controller_->clearTable();
-    //controller_->initializeDeck(seed);
-    controller_->resetPlay();
-}
-
 // When starting a new game, there are several things we must do.
 // Firstly, we gather the type of every player, then send that to the controller
 // to properly initialize each player. Afterwards,
 void View::startGameButtonWithSeedButtonClicked() {
-    int seed = getCurrentSeed();
+    int seed = getCurrentSeedAsInt();
 
     if (player_1_button_.get_label() != "Rage!") {
         // When starting a new game, we check the type of players, then
@@ -624,11 +427,15 @@ void View::startGameButtonWithSeedButtonClicked() {
             break;
         }
     }
+
+    // reset the discard button
+    discardButton_.set_sensitive(false);
 }
 
 void View::endCurrentGameButtonClicked() {
     controller_->endCurrentGameButtonClicked();
 
+    // Reset required gui elements properly
     player_1_button_.set_label("Human");
     player_2_button_.set_label("Human");
     player_3_button_.set_label("Human");
@@ -648,9 +455,11 @@ void View::endCurrentGameButtonClicked() {
     player_4_score_.set_label("Score: 0");
     player_4_discards_.set_label("Discards: 0");
 
-    // set player scores and discards back to zero
-
+    // fill the deck and hand with null card images
     resetCardsInPlayView();
+
+    // reset the discard button
+    discardButton_.set_sensitive(false);
 }
 
 void View::player_1_buttonClicked() {
@@ -693,10 +502,14 @@ void View::player_4_buttonClicked() {
     }
 }
 
+// Send the card clicked to the controller
 void View::playerHandButtonClicked(int indexOfCardChosen) {
     controller_->playerHandButtonClicked(indexOfCardChosen);
 }
 
+// If the discard button is active, it means
+// that the player must discard. Thus, we
+// allow the player now to pick a card to discard
 void View::discardButtonClicked() {
     discardButton_.set_sensitive(false);
 
@@ -713,7 +526,11 @@ void View::toggleIllegalPlays() {
         playerHandButton_[i].set_sensitive(false);
     }
 
-    if(!model_->hasLegalPlay()) {
+    // If the active player doesn't have a legal play and it is
+    // a human player, then
+    // turn off the discard button. Otherwise, turn it on,
+    // and enable the appropriate cards.
+    if(!model_->hasLegalPlay() && model_->isActiveHumanPlayer()) {
         discardButton_.set_sensitive(true);
     } else {
         for (int i = 0; i < hand.size(); ++i) {
@@ -750,15 +567,18 @@ void View::setActivePlayerOptions() {
     }
 }
 
-int View::getCurrentSeed() const {
-    // The following is to convert the seed value in the
-    // text field into an integer
+// The following is to convert the seed value in the
+// text field into an integer
+int View::getCurrentSeedAsInt() const {
     string seedString = seedField_.get_text();
     int seed;
     std::istringstream(seedString) >> seed;
     return seed;
 }
 
+// The follwing is to reset all the cards on the table and the player's hand
+// to the null card image. This is called when a new game starts
+// and whenever we need to clear the table and player's hand in general
 void View::resetCardsInPlayView() {
     const Glib::RefPtr<Gdk::Pixbuf> nullCardPixbuf = deck.getNullCardImage();
 
@@ -772,6 +592,8 @@ void View::resetCardsInPlayView() {
     }
 }
 
+// This brings up the view's popup dialog with the specified title
+// and text
 void View::showPopupDialog(string title, string text) {
     popupDialog_.set_title(title);
     popupDialog_.set_secondary_text(text, false);
