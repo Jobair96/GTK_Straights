@@ -89,7 +89,7 @@ private:
     std::string currentPlayMessage_; // stores the summary of the previous play to display on the history
     std::string rageQuitMessage_; // stores the summary of a rage quitter, is empty if there is no rage quit this turn, to display on the history
 
-    int gameSeed_ = 0; // stores the seed given at beginning of the game
+    int gameSeed_; // stores the seed given at beginning of the game
 
     Player *player_1_; // pointer to player 1
     Player *player_2_; // pointer to player 2
