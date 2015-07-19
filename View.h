@@ -153,30 +153,30 @@ private:
     /**************************End History******************************************/
 
     // Signal handlers
-    void startGameButtonWithSeedButtonClicked();
-    void endCurrentGameButtonClicked();
+    void startGameButtonWithSeedButtonClicked(); //handler for start game button
+    void endCurrentGameButtonClicked(); //handler for end game button
 
-    void player_1_buttonClicked();
-    void player_2_buttonClicked();
-    void player_3_buttonClicked();
-    void player_4_buttonClicked();
+    void player_1_buttonClicked(); //handler for first player button (Human/Computer or Rage)
+    void player_2_buttonClicked(); //handler for second player button
+    void player_3_buttonClicked(); //handler for third player button
+    void player_4_buttonClicked(); //handler for fourth player button
 
-    void playerHandButtonClicked(int);
+    void playerHandButtonClicked(int); //handler for hand card button
 
-    void discardButtonClicked();
+    void discardButtonClicked(); //handler for discard button
 
     // end signal handlers
 
     /************************Helper Functions************************/
-    int getCurrentSeedAsInt() const;
-    void resetCardsInPlayView();
+    int getCurrentSeedAsInt() const; // retrieves the seed passed in from the user
+    void resetCardsInPlayView(); // resets the images of the table and hand cards to null images
 
     void toggleIllegalPlays(); // Makes sure the illegal plays on the player's hands cannot be clicked
     void setActivePlayerOptions(); // Sets the player options depending on which player is active and their type (Computer/Human)
 
     void showPopupDialog(std::string, std::string, std::string); //changes text and title values of popup dialog and runs it
 
-    void reportEndRound();
+    void reportEndRound(); // reports the end of round material
 
     void beginRound(); // initializes a new round
 }; // View

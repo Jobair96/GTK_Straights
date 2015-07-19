@@ -27,41 +27,13 @@ vector<Card> Controller::getActiveHand() const {
     return activePlayer()->hand();
 }
 
-vector<Card> Controller::getDiscards(int playerNumber) const {
-    return model_->getDiscards(playerNumber);
-}
-
-int Controller::getScore(int playerNumber) const {
-    return model_->getScore(playerNumber);
-}
-
-int Controller::getScoreGain(int playerNumber) const {
-    return model_->getScoreGain(playerNumber);
-}
-
-vector<int> Controller::getWinners() const {
-    return model_->getWinners();
-}
-
 void Controller::setFirstPlayer(const int playerNumber) {
     setActivePlayer(playerNumber);
     model_->resetLegalPlays();
 }
 
-bool Controller::isActiveHumanPlayer() const {
-    return model_->isActiveHumanPlayer();
-}
-
 bool Controller::isLegalPlay(const Card card) const {
     return model_->isLegal(card);
-}
-
-bool Controller::isEndOfGame() const {
-    return model_->isEndOfGame();
-}
-
-bool Controller::isEndOfRound() const {
-    return model_->allHandsEmpty();
 }
 
 void Controller::playCard(Card card) {
@@ -79,10 +51,6 @@ void Controller::clearTable() {
 void Controller::resetPlay() {
     model_->resetPlayers();
     model_->resetLegalPlays();
-}
-
-void Controller::rageQuit() {
-    model_->replaceCurrentHumanWithComputer();
 }
 
 void Controller::completeComputerPlayCard() {

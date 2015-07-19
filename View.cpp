@@ -313,7 +313,7 @@ void View::beginRound() {
     convert.str("");
     convert << "It's player " << playerNumber << "'s turn to play.";
 
-    historyTextBuffer_->insert(historyTextBuffer_->end(), "\n" + convert.str());
+    historyTextBuffer_->insert(historyTextBuffer_->end(), "\nA new round begins. " + convert.str() + "\n");
 
     showPopupDialog("New Round", "A New Round Begins!", convert.str());
 }
@@ -356,7 +356,7 @@ void View::startGameButtonWithSeedButtonClicked() {
 
     historyTextBuffer_->erase(historyTextBuffer_->begin(), historyTextBuffer_->end());
 
-    historyTextBuffer_->insert(historyTextBuffer_->end(), convert.str());
+    historyTextBuffer_->insert(historyTextBuffer_->end(), "A new game begins. " + convert.str() + "\n");
 
     showPopupDialog("New Game", "<big><b>A New Game Begins!</b></big>", convert.str());
 
@@ -596,7 +596,7 @@ void View::reportEndRound() {
             }
         }
 
-        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over!\n" + history.str());
+        historyTextBuffer_->insert(historyTextBuffer_->end(), "\nGame over!\n" + history.str());
     }
 
     showPopupDialog(title, "<big><b>Report:</b></big>", convert.str());
