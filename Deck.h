@@ -22,7 +22,7 @@ public:
 private:
     static const int CARD_COUNT = 52; // The number of cards in the deck
 
-    std::mt19937 rng;
+    std::mt19937 rng; // The RNG seed function
 
     // The list of cards in the deck
     std::vector<Card> cards_;

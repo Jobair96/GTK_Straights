@@ -13,8 +13,7 @@ int main(int argc, char * argv[]) {
     Controller controller(&model); // The controller of the game
     View view(&model, &controller); // The view of the game - it is passed handle to controller and model
 
-    Gtk::Main::run(view);
-
+    Gtk::Main::run(view); // runs gtk
 
     return 0;
 

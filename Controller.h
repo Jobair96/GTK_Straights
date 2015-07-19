@@ -9,11 +9,11 @@ public:
     Controller(Model *); // constructor
     ~Controller(); // destructor
 
-    void startNewGameWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string);
-    void restartGameWithSeedButtonClicked(const int);
-    void endCurrentGameButtonClicked();
-    void playerRageButtonClicked();
-    void playerHandButtonClicked(const int);
+    void startNewGameWithSeedButtonClicked(const int, std::string, std::string, std::string, std::string); //performs the necessary model commands for start button being pushed
+    void restartGameWithSeedButtonClicked(const int); //performs the necessary model commands for pressing start in the middle of a game
+    void endCurrentGameButtonClicked(); //performs the necessary model commands for pressing end game prematurely
+    void playerRageButtonClicked(); //performs the necessary model commands for pressing rage quit
+    void playerHandButtonClicked(const int); //performs the necessary model commands for pressing a hand card button
 
 
 

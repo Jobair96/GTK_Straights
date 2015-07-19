@@ -7,15 +7,15 @@ class Observer;
 
 class Subject {
 public:
-    void subscribe(Observer *);
-    void unsubscribe(Observer *);
+    void subscribe(Observer *); //subscribes an observer to the subject
+    void unsubscribe(Observer *); //unsubscribes the observer
 
 protected:
-    void notify();
+    void notify(); //notifies the observer that the subject has changed
 
 private:
     typedef std::set<Observer *> Observers;
-    Observers observers_;
+    Observers observers_; //the set of observers subscribed to this subject
 
 }; // Subject
 

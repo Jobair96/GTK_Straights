@@ -266,7 +266,6 @@ void Model::updateLegalPlays(const Card card) {
         legalPlays_.push_back(Card(card.getSuit(), (Rank) (card.getRank() + 1)));
     }
 
-    //notify();
 }
 
 void Model::resetLegalPlays() {

@@ -32,9 +32,9 @@ public:
     Deck deck() const; // returns the shuffled deck
     TableCards tableCards() const; // returns the list of cards on the table
 
-    void removeCardFromActivePlayer(const Card);
+    void removeCardFromActivePlayer(const Card); // removes the specified card from the active player
 
-    void discardFromActivePlayer(const Card);
+    void discardFromActivePlayer(const Card); // discard the specified card from the active player
 
     void setPlayer(const std::string, const int); // creates a player based on player type (c or h) and player number
     void shuffleDeckWithNewSeed(const int); // shuffles the deck using the specified seed, also persists the seed
