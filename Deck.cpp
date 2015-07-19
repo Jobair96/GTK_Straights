@@ -63,9 +63,11 @@ Deck::~Deck() {
 
 }
 
-void Deck::shuffle(int seed) {
-        rng.seed(seed);
+void Deck::reseed(const int seed) {
+    rng.seed(seed);
+}
 
+void Deck::shuffle(int seed) {
     int n = CARD_COUNT;
 
     while ( n > 1 ) {

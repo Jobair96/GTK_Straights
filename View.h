@@ -138,6 +138,7 @@ private:
     // It gets loaded with different messages depending on the situation
     /******************************Dialog********************************************/
     Gtk::MessageDialog popupDialog_; //Dialog for round end
+    Glib::RefPtr<Gdk::Pixbuf> popupIconBuffer_; //Image buffer for popup icon
     Gtk::Image popupIcon_; //Dialog popup icon
     /**************************End Dialog********************************************/
 
@@ -173,7 +174,9 @@ private:
     void toggleIllegalPlays(); // Makes sure the illegal plays on the player's hands cannot be clicked
     void setActivePlayerOptions(); // Sets the player options depending on which player is active and their type (Computer/Human)
 
-    void showPopupDialog(std::string, std::string); //changes text and title values of popup dialog and runs it
+    void showPopupDialog(std::string, std::string, std::string); //changes text and title values of popup dialog and runs it
+
+    void reportEndRound(std::string, std::string);
 
     void beginRound(); // initializes a new round
 }; // View

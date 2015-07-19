@@ -43,6 +43,7 @@ public:
 
     void completeComputerPlayCard(); // completes the computer turn if they play a card
     void completeComputerDiscard(); // completes the computer turn if they discard a card
+    void completeComputerTurns(); // automatically runs through the computer turns until game over
 
     void discard(const Card); // the active player discards the specified card
 

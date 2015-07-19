@@ -63,13 +63,16 @@ void Model::setPlayer(string playerType, int playerNumber) {
 
 }
 
-void Model::shuffleDeck(const int seed) {
-    gameSeed_ = seed;
-    deck_.shuffle(seed);
+void Model::shuffleDeckWithNewSeed(const int seed) {
+    if (seed != gameSeed_) {
+        gameSeed_ = seed;
+        deck_.reseed(gameSeed_);
+    }
+    deck_.shuffle(gameSeed_);
 }
 
 void Model::shuffleDeckWithPersistedSeed() {
-    shuffleDeck(gameSeed_);
+    shuffleDeckWithNewSeed(gameSeed_);
 }
 
 string Model::currentPlayMessage() const {

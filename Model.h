@@ -37,7 +37,7 @@ public:
     void discardFromActivePlayer(const Card);
 
     void setPlayer(const std::string, const int); // creates a player based on player type (c or h) and player number
-    void shuffleDeck(const int); // shuffles the deck using the specified seed, also persists the seed
+    void shuffleDeckWithNewSeed(const int); // shuffles the deck using the specified seed, also persists the seed
     void shuffleDeckWithPersistedSeed(); // shuffles the deck using persisted seed
     void setActivePlayer(const int); // sets the active player to the specified player number
     void setLegalPlay(const Card); // adds a specified card to the list of legal plays

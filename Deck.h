@@ -13,6 +13,8 @@ public:
     Deck(const int); // Constructor
     ~Deck(); // Destructor
 
+    void reseed(const int); // Passes in a new seed for rng.seed
+
     void shuffle(const int); // Shuffles the deck using the seed parameter passed in
 
     std::vector<Card> cards() const; // returns cards_

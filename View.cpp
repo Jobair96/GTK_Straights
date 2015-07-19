@@ -14,11 +14,10 @@ View::View(Model *model, Controller *controller) :
         player_1_score_("Score: 0"), player_2_score_("Score: 0"), player_3_score_("Score: 0"), player_4_score_("Score: 0"),
         player_1_discards_("Discards: 0"), player_2_discards_("Discards: 0"), player_3_discards_("Discards: 0"), player_4_discards_("Discards: 0"),
         player_1_frame_("Player 1"), player_2_frame_("Player 2"), player_3_frame_("Player 3"), player_4_frame_("Player 4"),
-        playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIcon_("img/info_icon.png"),
+        playerHandFrame_("Your hand"), discardButton_("Discard"), popupDialog_(""), popupIconBuffer_(Gdk::Pixbuf::create_from_file("img/info_icon.png")), popupIcon_(),
         historyTitleBox_(), historyTextViewBox_(), historyTitleLabel_("Play History"), historyTextView_(), historyTextBuffer_(historyTextView_.get_buffer())
 
 {
-
     // Sets some properties of the window
     set_title("Straights UI");
     set_border_width(30);
@@ -173,8 +172,11 @@ View::View(Model *model, Controller *controller) :
     // Connect the signal for the discard button
     discardButton_.signal_clicked().connect(sigc::mem_fun(*this, &View::discardButtonClicked));
 
-    // Show the first popup dialog for game start
+    // Show the first popup dialog for game
+    popupIconBuffer_ = popupIconBuffer_->scale_simple(75,75,Gdk::INTERP_BILINEAR);
+    popupIcon_.set(popupIconBuffer_);
     popupDialog_.set_image(popupIcon_);
+    popupDialog_.set_size_request(400);
 
     // The final step is to display the buttons (they display themselves)
     show_all();
@@ -242,7 +244,7 @@ void View::update() {
 
     if(tableCards.size() != 0) {
         for (int i = 0; i < tableCards.size(); ++i) {
-            Card card = Card(tableCards[i].getSuit(), tableCards[i].getRank());
+            //Card card = Card(tableCards[i].getSuit(), tableCards[i].getRank());
 
             Rank rank = tableCards[i].getRank();
             Suit suit = tableCards[i].getSuit();
@@ -281,27 +283,29 @@ void View::update() {
     // Check if end of game
     if(model_->isEndOfGame()) {
 
-        for (int i = 1; i < 5; ++i) {
+//        for (int i = 1; i < 5; ++i) {
+//
+//            model_->updateScore(i);
+//            scoreStream.str("");
+//            scoreStream << "Score: " << model_->getScore(i);
+//
+//            if (i == 1) player_1_score_.set_label(scoreStream.str());
+//            else if (i == 2) player_2_score_.set_label(scoreStream.str());
+//            else if (i == 3) player_3_score_.set_label(scoreStream.str());
+//            else player_4_score_.set_label(scoreStream.str());
+//        }
+//
+//        vector<int> winners = model_->getWinners();
+//        convert.str("");
+//
+//       for (int i = 0; i < winners.size(); ++i) {
+//            convert << "Player " << winners.at(i) << " wins!" << endl;
+//        }
+//
+//        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
+//        showPopupDialog("Game Over", "<big><b>Report:</b></big>", convert.str()); //TODO
 
-            model_->updateScore(i);
-            scoreStream.str("");
-            scoreStream << "Score: " << model_->getScore(i);
-
-            if (i == 1) player_1_score_.set_label(scoreStream.str());
-            else if (i == 2) player_2_score_.set_label(scoreStream.str());
-            else if (i == 3) player_3_score_.set_label(scoreStream.str());
-            else player_4_score_.set_label(scoreStream.str());
-        }
-
-        vector<int> winners = model_->getWinners();
-        convert.str("");
-
-       for (int i = 0; i < winners.size(); ++i) {
-            convert << "Player " << winners.at(i) << " wins!" << endl;
-        }
-
-        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
-        showPopupDialog("Game Over", convert.str());
+        reportEndRound("Game Over", "<big><b>Report:</b></big>");
 
         // This is the end of the game, so it is akin to clicking the end game button
         endCurrentGameButtonClicked();
@@ -309,35 +313,7 @@ void View::update() {
         return;
 
     } else if(model_->allHandsEmpty()) {
-        convert.str("");
-        cout << "End of round" << endl;
-
-        for (int i = 1; i < 5; ++i) {
-            convert << "Player " << i << "'s discards:";
-            vector<Card> discards = model_->getDiscards(i);
-            if (discards.size() > 0) convert << " ";
-            for (int j = 0; j < discards.size(); ++j) {
-                convert << discards.at(j);
-
-                if (j < discards.size() - 1) {
-                    convert << " ";
-                }
-            }
-            convert << endl;
-            convert << "Player " << i << "'s score: " << model_->getScore(i) << " + " << model_->getScoreGain(i);
-            model_->updateScore(i);
-            convert << " = " << model_->getScore(i) << endl;
-
-            scoreStream.str("");
-            scoreStream << "Score: " << model_->getScore(i);
-
-            if (i == 1) player_1_score_.set_label(scoreStream.str());
-            else if (i == 2) player_2_score_.set_label(scoreStream.str());
-            else if (i == 3) player_3_score_.set_label(scoreStream.str());
-            else player_4_score_.set_label(scoreStream.str());
-        }
-
-        showPopupDialog("Round End", convert.str());
+        reportEndRound("Round End", "<big><b>Report:</b></big>");
 
         model_->shuffleDeckWithPersistedSeed();
 
@@ -363,7 +339,7 @@ void View::beginRound() {
 
     historyTextBuffer_->insert(historyTextBuffer_->end(), "\n" + convert.str());
 
-    showPopupDialog("New Round", convert.str());
+    showPopupDialog("New Round", "", convert.str()); //TODO
 }
 
 // When starting a new game, there are several things we must do.
@@ -406,27 +382,16 @@ void View::startGameButtonWithSeedButtonClicked() {
 
     historyTextBuffer_->insert(historyTextBuffer_->end(), convert.str());
 
-    showPopupDialog("New Game", convert.str());
+    showPopupDialog("New Game", "", convert.str()); //TODO
 
-    while (!model_->isActiveHumanPlayer()) {
-        if (!model_->isEndOfGame()) {
-            if (model_->hasLegalPlay()) {
-                controller_->completeComputerPlayCard();
-            } else {
-                controller_->completeComputerDiscard();
-            }
-        } else {
-            endCurrentGameButtonClicked();
-            break;
-        }
-    }
+    controller_->completeComputerTurns();
 
     // reset the discard button
     discardButton_.set_sensitive(false);
 
-    if(model_->isActiveHumanPlayer() && !model_->isEndOfGame()) {
+    //if(model_->isActiveHumanPlayer() && !model_->isEndOfGame()) {
         toggleIllegalPlays();
-    }
+    //}
 }
 
 void View::endCurrentGameButtonClicked() {
@@ -594,11 +559,62 @@ void View::resetCardsInPlayView() {
 
 // This brings up the view's popup dialog with the specified title
 // and text
-void View::showPopupDialog(string title, string text) {
+void View::showPopupDialog(string title, string primaryText, string secondaryText) {
     popupDialog_.set_title(title);
-    popupDialog_.set_secondary_text(text, false);
+    popupDialog_.set_markup(primaryText);
+    popupDialog_.set_secondary_text(secondaryText, true);
 
     popupDialog_.show_all();
     popupDialog_.run();
     popupDialog_.hide();
+}
+
+void View::reportEndRound(string title, string primaryText) {
+    ostringstream convert;
+    ostringstream scoreStream;
+
+    for (int i = 1; i < 5; ++i) {
+        convert << "Player " << i << "'s discards: ";
+        vector<Card> discards = model_->getDiscards(i);
+        if (discards.size() > 0) convert << " ";
+        for (int j = 0; j < discards.size(); ++j) {
+            convert << discards.at(j);
+
+            if (j < discards.size() - 1) {
+                convert << " ";
+            }
+        }
+        convert << endl;
+        convert << "Player " << i << "'s score:       " << model_->getScore(i) << " + " << model_->getScoreGain(i);
+        model_->updateScore(i);
+        convert << " = " << model_->getScore(i);
+
+        if (i != 4) {
+            convert << endl << endl;
+        }
+
+        model_->updateScore(i);
+        scoreStream.str("");
+        scoreStream << "Score: " << model_->getScore(i);
+
+        if (i == 1) player_1_score_.set_label(scoreStream.str());
+        else if (i == 2) player_2_score_.set_label(scoreStream.str());
+        else if (i == 3) player_3_score_.set_label(scoreStream.str());
+        else player_4_score_.set_label(scoreStream.str());
+    }
+
+    if (model_->isEndOfGame()) {
+        vector<int> winners = model_->getWinners();
+        convert << endl << endl;
+
+        for (int i = 0; i < winners.size(); ++i) {
+            convert << "<b>Player " << winners.at(i) << " wins!</b>";
+
+            if (i != winners.size() - 1) convert << endl;
+        }
+
+        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
+    }
+
+    showPopupDialog(title, primaryText, convert.str());//TODO
 }

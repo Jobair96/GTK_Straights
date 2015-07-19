@@ -114,7 +114,7 @@ void Controller::startNewGameWithSeedButtonClicked(
         string player_4_type)
 {
     // shuffle deck
-    model_->shuffleDeck(seed);
+    model_->shuffleDeckWithNewSeed(seed);
 
     // initialize players
     model_->setPlayer(player_1_type, 1);
@@ -135,17 +135,7 @@ void Controller::playerRageButtonClicked() {
     model_->replaceCurrentHumanWithComputer();
     model_->updateRageQuitMessage();
 
-        while (!model_->isActiveHumanPlayer()) {
-            if(!model_->isEndOfGame()) {
-                if (model_->hasLegalPlay()) {
-                    completeComputerPlayCard();
-                } else {
-                    completeComputerDiscard();
-                }
-            } else {
-                break;
-        }
-    }
+    completeComputerTurns();
 }
 
 void Controller::endCurrentGameButtonClicked() {
@@ -161,6 +151,10 @@ void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
         discard(card);
     }
 
+    completeComputerTurns();
+}
+
+void Controller::completeComputerTurns() {
     while (!model_->isActiveHumanPlayer()) {
         if(!model_->isEndOfGame()) {
             if (model_->hasLegalPlay()) {
