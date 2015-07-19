@@ -67,7 +67,7 @@ public:
 
     bool isLegal(const Card) const; // checks if a card is a legal play
     bool isActiveHumanPlayer() const; // checks if the active player is human
-    bool isEndOfGame() const; // checks if the game is ending (score > 80)
+    bool isEndOfGame(); // checks if the game is ending (score > 80)
 
     void updateScore(int); // adds a player's round score to their game score and resets round score
 

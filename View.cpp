@@ -234,6 +234,8 @@ void View::update() {
         }
     }
 
+    toggleIllegalPlays();
+
    // 2) Now get relevent table card data from model
     vector<Card> tableCards = model_->tableCards().tableCards();
 
@@ -279,8 +281,8 @@ void View::update() {
     if(model_->isEndOfGame()) {
 
         for (int i = 1; i < 5; ++i) {
-            model_->updateScore(i);
 
+            model_->updateScore(i);
             scoreStream.str("");
             scoreStream << "Score: " << model_->getScore(i);
 
@@ -290,7 +292,7 @@ void View::update() {
             else player_4_score_.set_label(scoreStream.str());
         }
 
-       vector<int> winners = model_->getWinners();
+        vector<int> winners = model_->getWinners();
         convert.str("");
 
        for (int i = 0; i < winners.size(); ++i) {
@@ -300,6 +302,7 @@ void View::update() {
         historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
         showPopupDialog("Game Over", convert.str());
 
+        // This is the end of the game, so it is akin to clicking the end game button
         endCurrentGameButtonClicked();
 
         return;
@@ -338,13 +341,11 @@ void View::update() {
         model_->shuffleDeckWithPersistedSeed();
 
         beginRound();
-
-        //cout << "Round has ended" << endl;
     }
 
     setActivePlayerOptions();
 
-    View::toggleIllegalPlays();
+   // toggleIllegalPlays();
 }
 
 void View::beginRound() {
@@ -363,14 +364,6 @@ void View::beginRound() {
     historyTextBuffer_->insert(historyTextBuffer_->end(), "\n" + convert.str());
 
     showPopupDialog("New Round", convert.str());
-
-    /*while (!model_->isActiveHumanPlayer()){
-        if(model_->hasLegalPlay()) {
-            controller_->completeComputerPlayCard();
-        } else {
-            controller_->completeComputerDiscard();
-        }
-    }*/
 }
 
 // When starting a new game, there are several things we must do.

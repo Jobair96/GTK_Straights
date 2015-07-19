@@ -272,7 +272,7 @@ void Model::resetLegalPlays() {
     setLegalPlay(Card(SPADE,SEVEN));
 }
 
-bool Model::isEndOfGame() const {
+bool Model::isEndOfGame() {
     // If all the players are null i.e they do not exist,
     // then the game has not even started or it has ended.
     // Either way, this is considered as end of game
@@ -287,6 +287,7 @@ bool Model::isEndOfGame() const {
         || player_2_->score() + player_2_->scoreGain() >= 80
         || player_3_->score() + player_3_->scoreGain() >= 80
         || player_4_->score() + player_4_->scoreGain() >= 80)) {
+
         return true;
     }
 
@@ -334,6 +335,8 @@ void Model::resetPlayers() {
 // It is different from resetGame(), which resets the players
 // and cards as brand new
 void Model::restartGame(const int seed) {
+    resetGame();
+
     deck_.shuffle(seed);
 
     Player* tempPlayer = nullptr;
@@ -361,13 +364,9 @@ void Model::restartGame(const int seed) {
             deletePlayer(4);
             player_4_ = tempPlayer;
         }
-
-        if (tempPlayer->findCard(Card(SPADE, SEVEN))) {
-            setActivePlayer(i + 1);
-        }
     }
 
-    tableCards_.clearTable();
+    setActivePlayer(getPlayerWithCard(Card(SPADE, SEVEN))->playerNumber());
 
     tempPlayer = nullptr;
 

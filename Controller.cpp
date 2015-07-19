@@ -138,9 +138,9 @@ void Controller::playerRageButtonClicked() {
         while (!model_->isActiveHumanPlayer()) {
             if(!model_->isEndOfGame()) {
                 if (model_->hasLegalPlay()) {
-                    Controller::completeComputerPlayCard();
+                    completeComputerPlayCard();
                 } else {
-                    Controller::completeComputerDiscard();
+                    completeComputerDiscard();
                 }
             } else {
                 break;
@@ -157,20 +157,16 @@ void Controller::playerHandButtonClicked(const int indexOfCardPlayed) {
 
     if(model_->hasLegalPlay()) {
         playCard(card);
-//        model_->addCardToTable(card);
-//        model_->updateLegalPlays(card);
-//        model_->removeCardFromActivePlayer(card);
-//        model_->updateActivePlayer();
     } else {
-        Controller::discard(card);
+        discard(card);
     }
 
     while (!model_->isActiveHumanPlayer()) {
         if(!model_->isEndOfGame()) {
             if (model_->hasLegalPlay()) {
-                Controller::completeComputerPlayCard();
+                completeComputerPlayCard();
             } else {
-                Controller::completeComputerDiscard();
+                completeComputerDiscard();
             }
         } else {
             break;
