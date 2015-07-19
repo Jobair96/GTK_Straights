@@ -176,7 +176,7 @@ private:
 
     void showPopupDialog(std::string, std::string, std::string); //changes text and title values of popup dialog and runs it
 
-    void reportEndRound(std::string, std::string);
+    void reportEndRound();
 
     void beginRound(); // initializes a new round
 }; // View

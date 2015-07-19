@@ -282,30 +282,7 @@ void View::update() {
 
     // Check if end of game
     if(model_->isEndOfGame()) {
-
-//        for (int i = 1; i < 5; ++i) {
-//
-//            model_->updateScore(i);
-//            scoreStream.str("");
-//            scoreStream << "Score: " << model_->getScore(i);
-//
-//            if (i == 1) player_1_score_.set_label(scoreStream.str());
-//            else if (i == 2) player_2_score_.set_label(scoreStream.str());
-//            else if (i == 3) player_3_score_.set_label(scoreStream.str());
-//            else player_4_score_.set_label(scoreStream.str());
-//        }
-//
-//        vector<int> winners = model_->getWinners();
-//        convert.str("");
-//
-//       for (int i = 0; i < winners.size(); ++i) {
-//            convert << "Player " << winners.at(i) << " wins!" << endl;
-//        }
-//
-//        historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
-//        showPopupDialog("Game Over", "<big><b>Report:</b></big>", convert.str()); //TODO
-
-        reportEndRound("Game Over", "<big><b>Report:</b></big>");
+        reportEndRound();
 
         // This is the end of the game, so it is akin to clicking the end game button
         endCurrentGameButtonClicked();
@@ -313,7 +290,7 @@ void View::update() {
         return;
 
     } else if(model_->allHandsEmpty()) {
-        reportEndRound("Round End", "<big><b>Report:</b></big>");
+        reportEndRound();
 
         model_->shuffleDeckWithPersistedSeed();
 
@@ -569,7 +546,8 @@ void View::showPopupDialog(string title, string primaryText, string secondaryTex
     popupDialog_.hide();
 }
 
-void View::reportEndRound(string title, string primaryText) {
+void View::reportEndRound() {
+    string title = "Round Over";
     ostringstream convert;
     ostringstream scoreStream;
 
@@ -604,6 +582,8 @@ void View::reportEndRound(string title, string primaryText) {
     }
 
     if (model_->isEndOfGame()) {
+        title = "Game Over";
+
         vector<int> winners = model_->getWinners();
         convert << endl << endl;
 
@@ -616,5 +596,5 @@ void View::reportEndRound(string title, string primaryText) {
         historyTextBuffer_->insert(historyTextBuffer_->end(), "Game over! " + convert.str());
     }
 
-    showPopupDialog(title, primaryText, convert.str());//TODO
+    showPopupDialog(title, "<big><b>Report:</b></big>", convert.str());
 }
