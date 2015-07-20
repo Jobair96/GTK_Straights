@@ -215,21 +215,19 @@ Player *Model::getPlayer(int playerNumber) const {
 
 vector<int> Model::getWinners()  {
     // Update everyone's scores
-    for(int i = 1; i < 5; ++i) {
-        updateScore(i);
-    }
 
     vector<int> winners;
-    int lowestScore = getScore(1);
+    // get everyone's total scores
+    int lowestScore = getScore(1) + getScoreGain(1);
 
     for (int i = 1; i < 5; ++i) {
-        if (getScore(i) <= lowestScore) {
-            lowestScore = getScore(i);
+        if (lowestScore >= getScore(i) + getScoreGain(i)) {
+            lowestScore = getScore(i) + getScoreGain(i);
         }
     }
 
     for (int i = 1; i < 5; ++i) {
-        if (getPlayer(i)->score() == lowestScore) {
+        if (getScore(i) + getScoreGain(i) == lowestScore) {
             winners.push_back(i);
         }
     }
@@ -355,7 +353,7 @@ void Model::restartGame(const int seed) {
     if(seed != gameSeed_) {
         shuffleDeckWithNewSeed(seed);
     } else {
-        deck_.shuffle(seed);
+        shuffleDeckWithPersistedSeed();
     }
 
     Player* tempPlayer = nullptr;
