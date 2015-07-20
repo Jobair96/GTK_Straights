@@ -221,7 +221,7 @@ vector<int> Model::getWinners()  {
     int lowestScore = getScore(1) + getScoreGain(1);
 
     for (int i = 1; i < 5; ++i) {
-        if (lowestScore >= getScore(i) + getScoreGain(i)) {
+        if (getScore(i) + getScoreGain(i) <= lowestScore) {
             lowestScore = getScore(i) + getScoreGain(i);
         }
     }
